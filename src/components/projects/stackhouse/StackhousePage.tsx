@@ -585,6 +585,7 @@ export default function StackhousePage({ onBack }: StackhousePageProps) {
                     src={encodeURI("/assets/images/Stackhouse/StackhouseThumbnailorBanner.png")}
                     className="absolute inset-0 w-full h-full object-cover"
                     alt="Stackhouse Cinematic Banner"
+                    referrerPolicy="no-referrer"
                   />
                 </div>
               </div>
@@ -606,6 +607,7 @@ export default function StackhousePage({ onBack }: StackhousePageProps) {
                     src={encodeURI("/assets/images/Stackhouse/StackhouseBanner2.png")}
                     className="absolute inset-0 w-full h-full object-cover"
                     alt="Stackhouse Tactile Banner"
+                    referrerPolicy="no-referrer"
                   />
                 </div>
               </div>

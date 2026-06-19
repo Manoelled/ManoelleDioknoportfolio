@@ -58,6 +58,7 @@ function BrowserWindow({
                 src={encodedDesktop}
                 className="w-full h-auto block"
                 alt={title}
+                referrerPolicy="no-referrer"
               />
             </div>
           </div>
@@ -72,6 +73,7 @@ function BrowserWindow({
             src={encodedMobile || encodedDesktop}
             className="absolute inset-0 w-full h-full object-cover"
             alt={title}
+            referrerPolicy="no-referrer"
           />
         </div>
       );
@@ -123,6 +125,7 @@ function BrowserWindow({
                 src={encodedDesktop}
                 className="absolute inset-0 w-full h-full object-cover"
                 alt={title}
+                referrerPolicy="no-referrer"
               />
             </div>
           ) : (
@@ -131,6 +134,7 @@ function BrowserWindow({
                 src={encodedMobile || encodedDesktop}
                 className="absolute inset-0 w-full h-full object-cover"
                 alt={title}
+                referrerPolicy="no-referrer"
               />
             </div>
           )}
@@ -214,6 +218,7 @@ function GalleryItem({
             src={encodedSrc} 
             alt={label} 
             onError={() => setHasError(true)}
+            referrerPolicy="no-referrer"
             className={aspect === 'original' ? "w-full h-auto object-contain transition-transform duration-700 group-hover:scale-[1.01]" : "w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"} 
           />
         )}

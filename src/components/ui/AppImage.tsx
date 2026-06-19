@@ -68,6 +68,7 @@ const AppImage = memo(function AppImage({
       onLoad={handleLoad}
       onClick={onClick}
       loading={loading}
+      referrerPolicy="no-referrer"
       {...props}
     />
   );

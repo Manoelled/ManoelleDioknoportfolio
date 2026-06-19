@@ -279,8 +279,9 @@ export default function RamngoPage({ onBack }: RamngoPageProps) {
             >
               <div className="w-full rounded-2ios overflow-hidden group transition-all duration-500 hover:shadow-2xl border border-[#D1D1D6]/60 bg-neutral-100">
                 <img 
-                  src="/assets/images/Ramngo Banner.png" 
+                  src={encodeURI("/assets/images/Ramngo Banner.png")} 
                   alt="RAMNGO Brand Banner" 
+                  referrerPolicy="no-referrer"
                   className="w-full h-auto block transition-transform duration-700 group-hover:scale-[1.01]" 
                 />
               </div>
@@ -675,6 +676,7 @@ function GalleryItem({
             src={encodedSrc} 
             alt={label} 
             onError={() => setHasError(true)}
+            referrerPolicy="no-referrer"
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
           />
         )}
