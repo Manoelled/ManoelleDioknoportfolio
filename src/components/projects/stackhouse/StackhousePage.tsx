@@ -549,11 +549,7 @@ export default function StackhousePage({ onBack }: StackhousePageProps) {
 
             {/* Description Caption Block */}
             <div className="px-4 pb-4 pt-1 bg-white border-t border-[#F2F2F7] text-left">
-              <p className="text-[11px] text-[#1C1C1E] leading-relaxed font-semibold">
-                <span className="font-extrabold mr-1.5 text-neutral-950">stackhouse.cuisine</span>
-                Cohesive structural gastronomy. Our presentation frames culinary design on raw physical matter—combining organic basalt plate pillars and crystalline liquid prisms for a truly monumental sensory narrative.
-              </p>
-              <p className="text-[9px] font-bold text-neutral-400 tracking-wide uppercase mt-2">JUNE 5, 2026</p>
+              <p className="text-[9px] font-bold text-neutral-400 tracking-wide uppercase mt-1">JUNE 5, 2026</p>
             </div>
           </div>
         </section>

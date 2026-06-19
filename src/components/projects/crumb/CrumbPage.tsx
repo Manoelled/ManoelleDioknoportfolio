@@ -321,11 +321,7 @@ export default function CrumbPage({ onBack }: CrumbPageProps) {
 
             {/* Description Caption Block */}
             <div className="px-4 pb-4 pt-1 bg-white border-t border-[#F2F2F7] text-left">
-              <p className="text-[11px] text-[#1C1C1E] leading-relaxed font-semibold">
-                <span className="font-extrabold mr-1.5 text-neutral-950">crumb.cookies</span>
-                Our slow-proved sourdough loaves are hand kneaded, slow fermented for 36 hours for rich gluten structure and deep toasted crust profiles. Fired fresh mornings.
-              </p>
-              <p className="text-[9px] font-bold text-neutral-400 tracking-wide uppercase mt-2">JUNE 4, 2026</p>
+              <p className="text-[9px] font-bold text-neutral-400 tracking-wide uppercase mt-1">JUNE 4, 2026</p>
             </div>
           </div>
         </section>

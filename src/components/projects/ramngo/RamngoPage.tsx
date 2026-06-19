@@ -222,11 +222,7 @@ export default function RamngoPage({ onBack }: RamngoPageProps) {
 
               {/* Caption */}
               <div className="px-5 pb-5 pt-2.5 bg-white border-t border-[#F2F2F7] text-left">
-                <p className="text-xs text-[#1C1C1E] leading-relaxed font-semibold">
-                  <span className="font-extrabold mr-1.5 text-neutral-950">RamnGo</span>
-                  Are you always busy here? Don't have time? Don't worry, you've got your Ramen Go covered. 🔥📦 Engineered for absolute velocity and premium flavor—zero compromise, zero spills, 100% brand attitude. High-frequency design for those living life in the fast lane. ⚡️🍜 #VelocityNoodling #RamnGo #DesignPackaging #StreetEats
-                </p>
-                <p className="text-[9px] font-bold text-neutral-400 tracking-wide uppercase mt-2.5">JUNE 4, 2026</p>
+                <p className="text-[9px] font-bold text-neutral-400 tracking-wide uppercase mt-1">JUNE 4, 2026</p>
               </div>
             </div>
           </div>
