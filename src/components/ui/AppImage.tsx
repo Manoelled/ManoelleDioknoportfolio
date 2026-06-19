@@ -23,15 +23,19 @@ const AppImage = memo(function AppImage({
   loading = 'lazy',
   ...props
 }: AppImageProps) {
-  const [imageSrc, setImageSrc] = useState(src);
+  const safeSrc = useMemo(() => {
+    return src ? encodeURI(src) : '';
+  }, [src]);
+
+  const [imageSrc, setImageSrc] = useState(safeSrc);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
-    setImageSrc(src);
+    setImageSrc(safeSrc);
     setHasError(false);
     setIsLoading(true);
-  }, [src]);
+  }, [safeSrc]);
 
   const handleError = useCallback(() => {
     if (!hasError && imageSrc !== fallbackSrc) {
@@ -64,7 +68,6 @@ const AppImage = memo(function AppImage({
       onLoad={handleLoad}
       onClick={onClick}
       loading={loading}
-      referrerPolicy="no-referrer"
       {...props}
     />
   );

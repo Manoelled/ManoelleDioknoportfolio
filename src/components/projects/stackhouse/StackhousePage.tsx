@@ -183,6 +183,7 @@ function GalleryItem({
   }
 
   const isVideo = src.endsWith('.mp4');
+  const encodedSrc = encodeURI(src);
 
   return (
     <motion.div 
@@ -198,7 +199,7 @@ function GalleryItem({
           </div>
         ) : isVideo ? (
           <video
-            src={src}
+            src={encodedSrc}
             autoPlay
             loop
             muted
@@ -208,9 +209,8 @@ function GalleryItem({
           />
         ) : (
           <img 
-            src={src} 
+            src={encodedSrc} 
             alt={label} 
-            referrerPolicy="no-referrer"
             onError={() => setHasError(true)}
             className={aspect === 'original' ? "w-full h-auto object-contain transition-transform duration-700 group-hover:scale-[1.01]" : "w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"} 
           />
@@ -582,10 +582,9 @@ export default function StackhousePage({ onBack }: StackhousePageProps) {
               <div className="bg-[#F2F2F7]/40 p-2 sm:p-4">
                 <div className="w-full bg-white rounded-lg overflow-hidden border border-[#D1D1D6] shadow-sm aspect-[16/9] relative">
                   <img
-                    src="/assets/images/Stackhouse/StackhouseThumbnailorBanner.png"
+                    src={encodeURI("/assets/images/Stackhouse/StackhouseThumbnailorBanner.png")}
                     className="absolute inset-0 w-full h-full object-cover"
                     alt="Stackhouse Cinematic Banner"
-                    referrerPolicy="no-referrer"
                   />
                 </div>
               </div>
@@ -604,10 +603,9 @@ export default function StackhousePage({ onBack }: StackhousePageProps) {
               <div className="bg-[#F2F2F7]/40 p-2 sm:p-4">
                 <div className="w-full bg-white rounded-lg overflow-hidden border border-[#D1D1D6] shadow-sm aspect-[4/3] relative">
                   <img
-                    src="/assets/images/Stackhouse/StackhouseBanner2.png"
+                    src={encodeURI("/assets/images/Stackhouse/StackhouseBanner2.png")}
                     className="absolute inset-0 w-full h-full object-cover"
                     alt="Stackhouse Tactile Banner"
-                    referrerPolicy="no-referrer"
                   />
                 </div>
               </div>

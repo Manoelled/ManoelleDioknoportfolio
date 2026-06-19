@@ -22,7 +22,7 @@ export default function FolderCard({ project, index, onClick }: FolderCardProps)
     });
   };
 
-  const hasNoContent = project.id === 'dc-business-solutions';
+  const hasNoContent = project.id === 'dc-business-solutions' || project.id === 'cliptographic';
   const rotateX = isHovered && !hasNoContent ? (mousePos.y - 0.5) * -8 : 0;
   const rotateY = isHovered && !hasNoContent ? (mousePos.x - 0.5) * 8 : 0;
 

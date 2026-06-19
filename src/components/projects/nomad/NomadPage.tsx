@@ -29,6 +29,9 @@ function BrowserWindow({
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  const encodedDesktop = desktopSrc ? encodeURI(desktopSrc) : '';
+  const encodedMobile = mobileSrc ? encodeURI(mobileSrc) : '';
+
   if (desktopSrc) {
     if (showFull) {
       return (
@@ -52,10 +55,9 @@ function BrowserWindow({
           <div className="bg-[#F2F2F7]/40 p-2 sm:p-4">
             <div className="w-full bg-white rounded-lg overflow-hidden border border-[#D1D1D6] shadow-sm">
               <img
-                src={desktopSrc}
+                src={encodedDesktop}
                 className="w-full h-auto block"
                 alt={title}
-                referrerPolicy="no-referrer"
               />
             </div>
           </div>
@@ -67,7 +69,7 @@ function BrowserWindow({
       return (
         <div className="w-full aspect-[9/16] bg-neutral-950 relative rounded-2ios overflow-hidden border border-[#D1D1D6] shadow-xl">
           <img
-            src={mobileSrc || desktopSrc}
+            src={encodedMobile || encodedDesktop}
             className="absolute inset-0 w-full h-full object-cover"
             alt={title}
           />
@@ -118,7 +120,7 @@ function BrowserWindow({
           {viewMode === 'desktop' ? (
             <div className="w-full aspect-[16/9] bg-neutral-100 relative rounded-lg overflow-hidden border border-[#D1D1D6] shadow-sm">
               <img
-                src={desktopSrc}
+                src={encodedDesktop}
                 className="absolute inset-0 w-full h-full object-cover"
                 alt={title}
               />
@@ -126,7 +128,7 @@ function BrowserWindow({
           ) : (
             <div className="w-full max-w-[325px] aspect-[9/16] bg-neutral-100 relative rounded-2ios overflow-hidden border border-[#D1D1D6] shadow-xl hover:border-neutral-400 transition-all duration-500 my-4">
               <img
-                src={mobileSrc || desktopSrc}
+                src={encodedMobile || encodedDesktop}
                 className="absolute inset-0 w-full h-full object-cover"
                 alt={title}
               />
@@ -183,6 +185,7 @@ function GalleryItem({
   }
 
   const isVideo = src.endsWith('.mp4');
+  const encodedSrc = encodeURI(src);
 
   return (
     <motion.div 
@@ -198,7 +201,7 @@ function GalleryItem({
           </div>
         ) : isVideo ? (
           <video
-            src={src}
+            src={encodedSrc}
             autoPlay
             loop
             muted
@@ -208,9 +211,8 @@ function GalleryItem({
           />
         ) : (
           <img 
-            src={src} 
+            src={encodedSrc} 
             alt={label} 
-            referrerPolicy="no-referrer"
             onError={() => setHasError(true)}
             className={aspect === 'original' ? "w-full h-auto object-contain transition-transform duration-700 group-hover:scale-[1.01]" : "w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"} 
           />

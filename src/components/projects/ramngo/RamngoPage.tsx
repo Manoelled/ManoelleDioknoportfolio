@@ -469,12 +469,13 @@ function FeatMockupImage({
     );
   }
 
+  const encodedSrc = encodeURI(src);
+
   return (
     <div className="w-full flex justify-center items-center py-6 relative group">
       <img 
-        src={src} 
+        src={encodedSrc} 
         alt={alt} 
-        referrerPolicy="no-referrer"
         onError={() => setHasError(true)}
         className="w-full max-w-[680px] md:max-w-[75%] lg:max-w-[80%] h-auto object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.08)] transition-transform duration-700 group-hover:scale-[1.01]" 
       />
@@ -654,6 +655,8 @@ function GalleryItem({
     aspectLabel = "TACTILE 4:3";
   }
 
+  const encodedSrc = encodeURI(src);
+
   return (
     <motion.div 
       initial={{ opacity: 0, scale: 0.98 }}
@@ -669,9 +672,8 @@ function GalleryItem({
           </div>
         ) : (
           <img 
-            src={src} 
+            src={encodedSrc} 
             alt={label} 
-            referrerPolicy="no-referrer"
             onError={() => setHasError(true)}
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
           />
