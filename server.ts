@@ -23,7 +23,7 @@ const INITIAL_STATS: Record<string, { likes: number; views: number }> = {
 };
 
 // Ensure data folder and file exist with initial counts
-function loadStats(): Record<string, { likes: number; views: number }> {
+function loadStats(): Record<string, { likes: number; views: number; likedSessions?: string[] }> {
   try {
     // Ensure parent directory exists
     const dir = path.dirname(STATS_FILE_PATH);
@@ -32,8 +32,12 @@ function loadStats(): Record<string, { likes: number; views: number }> {
     }
 
     if (!fs.existsSync(STATS_FILE_PATH)) {
-      fs.writeFileSync(STATS_FILE_PATH, JSON.stringify(INITIAL_STATS, null, 2), "utf-8");
-      return INITIAL_STATS;
+      const initialWithSessions: Record<string, { likes: number; views: number; likedSessions: string[] }> = {};
+      for (const [key, value] of Object.entries(INITIAL_STATS)) {
+        initialWithSessions[key] = { ...value, likedSessions: [] };
+      }
+      fs.writeFileSync(STATS_FILE_PATH, JSON.stringify(initialWithSessions, null, 2), "utf-8");
+      return initialWithSessions;
     }
 
     const fileContent = fs.readFileSync(STATS_FILE_PATH, "utf-8");
@@ -43,7 +47,10 @@ function loadStats(): Record<string, { likes: number; views: number }> {
     let updated = false;
     for (const key of Object.keys(INITIAL_STATS)) {
       if (!data[key] || typeof data[key].likes !== "number" || typeof data[key].views !== "number") {
-        data[key] = { ...INITIAL_STATS[key] };
+        data[key] = { ...INITIAL_STATS[key], likedSessions: [] };
+        updated = true;
+      } else if (!data[key].likedSessions) {
+        data[key].likedSessions = [];
         updated = true;
       }
     }
@@ -55,12 +62,16 @@ function loadStats(): Record<string, { likes: number; views: number }> {
     return data;
   } catch (error) {
     console.error("Error loading or initializing stats file. Using memory cache:", error);
-    return { ...INITIAL_STATS };
+    const initialWithSessions: Record<string, { likes: number; views: number; likedSessions: string[] }> = {};
+    for (const [key, value] of Object.entries(INITIAL_STATS)) {
+      initialWithSessions[key] = { ...value, likedSessions: [] };
+    }
+    return initialWithSessions;
   }
 }
 
 // Save stats helper
-function saveStats(data: Record<string, { likes: number; views: number }>) {
+function saveStats(data: Record<string, { likes: number; views: number; likedSessions?: string[] }>) {
   try {
     fs.writeFileSync(STATS_FILE_PATH, JSON.stringify(data, null, 2), "utf-8");
   } catch (error) {
@@ -73,15 +84,31 @@ let statsDb = loadStats();
 
 // API: Get overview of all project stats
 app.get("/api/stats", (req, res) => {
-  res.json(statsDb);
+  const sessionId = req.headers["x-session-id"] as string || "";
+  
+  // Format the returned stats to tell this specific session if they have liked each project
+  const statsForClient: Record<string, { likes: number; views: number; isLiked: boolean; likedSessions?: string[] }> = {};
+  for (const [projectId, value] of Object.entries(statsDb)) {
+    const sSessions = value.likedSessions || [];
+    statsForClient[projectId] = {
+      likes: value.likes,
+      views: value.views,
+      isLiked: sSessions.includes(sessionId),
+      likedSessions: sSessions
+    };
+  }
+  res.json(statsForClient);
 });
 
 // API: Track unique or incremental views
 app.post("/api/stats/:projectId/view", (req, res) => {
   const { projectId } = req.params;
+  const sessionId = req.headers["x-session-id"] as string || "";
   
   if (!statsDb[projectId]) {
-    statsDb[projectId] = { likes: 100, views: 500 };
+    statsDb[projectId] = { likes: 100, views: 500, likedSessions: [] };
+  } else if (!statsDb[projectId].likedSessions) {
+    statsDb[projectId].likedSessions = [];
   }
   
   statsDb[projectId].views += 1;
@@ -97,18 +124,35 @@ app.post("/api/stats/:projectId/view", (req, res) => {
 app.post("/api/stats/:projectId/like", (req, res) => {
   const { projectId } = req.params;
   const { action } = req.body; // 'like' or 'unlike'
-
+  const sessionId = req.headers["x-session-id"] as string || "";
+  
   if (!statsDb[projectId]) {
-    statsDb[projectId] = { likes: 100, views: 500 };
+    statsDb[projectId] = { likes: 100, views: 500, likedSessions: [] };
+  } else if (!statsDb[projectId].likedSessions) {
+    statsDb[projectId].likedSessions = [];
   }
 
+  const likedSessions = statsDb[projectId].likedSessions || [];
+  const isAlreadyLiked = likedSessions.includes(sessionId);
+
   if (action === "like") {
-    statsDb[projectId].likes += 1;
+    if (!isAlreadyLiked) {
+      if (sessionId) {
+        likedSessions.push(sessionId);
+      }
+      statsDb[projectId].likedSessions = likedSessions;
+      statsDb[projectId].likes += 1;
+    }
   } else if (action === "unlike") {
-    // Prevent starting likes below 0 or below original baseline
-    const minLikes = INITIAL_STATS[projectId] ? INITIAL_STATS[projectId].likes : 0;
-    if (statsDb[projectId].likes > minLikes) {
-      statsDb[projectId].likes -= 1;
+    if (isAlreadyLiked) {
+      if (sessionId) {
+        statsDb[projectId].likedSessions = likedSessions.filter(id => id !== sessionId);
+      }
+      // Prevent starting likes below 0 or below original baseline
+      const minLikes = INITIAL_STATS[projectId] ? INITIAL_STATS[projectId].likes : 0;
+      if (statsDb[projectId].likes > minLikes) {
+        statsDb[projectId].likes -= 1;
+      }
     }
   }
 

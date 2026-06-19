@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 export interface ProjectStats {
   likes: number;
   views: number;
+  isLiked?: boolean;
 }
 
 // Global cached stats to share between different rendering contexts or pages
@@ -11,6 +12,20 @@ const cacheListeners = new Set<() => void>();
 
 function notifyListeners() {
   cacheListeners.forEach(listener => listener());
+}
+
+// Generate or retrieve a persistent session ID for the current tab/window session
+function getSessionId(): string {
+  try {
+    let sessId = sessionStorage.getItem("portfolio_session_id");
+    if (!sessId) {
+      sessId = "sess_" + Math.random().toString(36).substring(2, 11);
+      sessionStorage.setItem("portfolio_session_id", sessId);
+    }
+    return sessId;
+  } catch {
+    return "sess_default";
+  }
 }
 
 export function useProjectStats(projectId: string, defaultLikes: number, defaultViews: number) {
@@ -29,8 +44,11 @@ export function useProjectStats(projectId: string, defaultLikes: number, default
   });
 
   const [isLiked, setIsLiked] = useState<boolean>(() => {
+    if (globalStatsCache && globalStatsCache[projectId] && typeof globalStatsCache[projectId].isLiked === "boolean") {
+      return globalStatsCache[projectId].isLiked!;
+    }
     try {
-      const stored = localStorage.getItem(`liked_${projectId}`);
+      const stored = sessionStorage.getItem(`liked_${projectId}`);
       return stored === "true";
     } catch {
       return false;
@@ -40,11 +58,16 @@ export function useProjectStats(projectId: string, defaultLikes: number, default
   // Track if we have already recorded a view during this specific session page visit
   useEffect(() => {
     let active = true;
+    const sessId = getSessionId();
 
     // Load current global stats on mount
     const fetchCurrentStats = async () => {
       try {
-        const res = await fetch("/api/stats");
+        const res = await fetch("/api/stats", {
+          headers: {
+            "x-session-id": sessId
+          }
+        });
         if (res.ok) {
           const allStats = await res.json();
           globalStatsCache = allStats;
@@ -64,6 +87,9 @@ export function useProjectStats(projectId: string, defaultLikes: number, default
       if (globalStatsCache && globalStatsCache[projectId] && active) {
         setLikes(globalStatsCache[projectId].likes);
         setViews(globalStatsCache[projectId].views);
+        if (typeof globalStatsCache[projectId].isLiked === "boolean") {
+          setIsLiked(globalStatsCache[projectId].isLiked!);
+        }
       }
     };
 
@@ -76,13 +102,20 @@ export function useProjectStats(projectId: string, defaultLikes: number, default
         const sessionViewKey = `viewed_session_${projectId}`;
         if (!sessionStorage.getItem(sessionViewKey)) {
           const res = await fetch(`/api/stats/${projectId}/view`, {
-            method: "POST"
+            method: "POST",
+            headers: {
+              "x-session-id": sessId
+            }
           });
           if (res.ok && active) {
             const data = await res.json();
             if (data.stats) {
               if (!globalStatsCache) globalStatsCache = {};
-              globalStatsCache[projectId] = data.stats;
+              globalStatsCache[projectId] = {
+                likes: data.stats.likes,
+                views: data.stats.views,
+                isLiked: data.stats.likedSessions?.includes(sessId) ?? false
+              };
               notifyListeners();
               sessionStorage.setItem(sessionViewKey, "true");
             }
@@ -104,17 +137,21 @@ export function useProjectStats(projectId: string, defaultLikes: number, default
   const toggleLike = async () => {
     const nextLikedState = !isLiked;
     const action = nextLikedState ? "like" : "unlike";
+    const sessId = getSessionId();
 
     // Optimistic UI updates
     setIsLiked(nextLikedState);
     setLikes(prev => nextLikedState ? prev + 1 : Math.max(0, prev - 1));
 
     try {
-      localStorage.setItem(`liked_${projectId}`, nextLikedState ? "true" : "false");
+      sessionStorage.setItem(`liked_${projectId}`, nextLikedState ? "true" : "false");
 
       const res = await fetch(`/api/stats/${projectId}/like`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "x-session-id": sessId
+        },
         body: JSON.stringify({ action })
       });
 
@@ -122,7 +159,11 @@ export function useProjectStats(projectId: string, defaultLikes: number, default
         const data = await res.json();
         if (data.stats) {
           if (!globalStatsCache) globalStatsCache = {};
-          globalStatsCache[projectId] = data.stats;
+          globalStatsCache[projectId] = {
+            likes: data.stats.likes,
+            views: data.stats.views,
+            isLiked: data.stats.likedSessions?.includes(sessId) ?? nextLikedState
+          };
           notifyListeners();
         }
       }
