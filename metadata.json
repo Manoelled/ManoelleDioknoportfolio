@@ -1,0 +1,6 @@
+{
+  "name": "Manoelle Diokno | Portfolio Workspace",
+  "description": "An interactive creative direction portfolio featuring custom animated iOS folder cards, a fully simulated mobile social media feed with program inspector, and a live sandboxed client workspace tool.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

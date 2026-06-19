@@ -1,0 +1,8 @@
+{
+  "name": "Rramngo Showcase",
+  "description": "A high-fidelity project showcase for Rramngo, featuring a minimalist iOS-inspired aesthetic, structural clarity, and interactive visual galleries.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
