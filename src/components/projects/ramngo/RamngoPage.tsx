@@ -2,8 +2,6 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { ArrowLeft, Share2, Heart, Mail, Monitor, Smartphone, MessageCircle, Send, Bookmark } from 'lucide-react';
 
-import { useProjectStats } from '../../../lib/stats';
-
 interface RamngoPageProps {
   onBack: () => void;
 }
@@ -224,7 +222,11 @@ export default function RamngoPage({ onBack }: RamngoPageProps) {
 
               {/* Caption */}
               <div className="px-5 pb-5 pt-2.5 bg-white border-t border-[#F2F2F7] text-left">
-                <p className="text-[9px] font-bold text-neutral-400 tracking-wide uppercase mt-1">JUNE 4, 2026</p>
+                <p className="text-xs text-[#1C1C1E] leading-relaxed font-semibold">
+                  <span className="font-extrabold mr-1.5 text-neutral-950">RamnGo</span>
+                  Are you always busy here? Don't have time? Don't worry, you've got your Ramen Go covered. 🔥📦 Engineered for absolute velocity and premium flavor—zero compromise, zero spills, 100% brand attitude. High-frequency design for those living life in the fast lane. ⚡️🍜 #VelocityNoodling #RamnGo #DesignPackaging #StreetEats
+                </p>
+                <p className="text-[9px] font-bold text-neutral-400 tracking-wide uppercase mt-2.5">JUNE 4, 2026</p>
               </div>
             </div>
           </div>
@@ -279,9 +281,8 @@ export default function RamngoPage({ onBack }: RamngoPageProps) {
             >
               <div className="w-full rounded-2ios overflow-hidden group transition-all duration-500 hover:shadow-2xl border border-[#D1D1D6]/60 bg-neutral-100">
                 <img 
-                  src={encodeURI("/assets/images/Ramngo Banner.png")} 
+                  src="/assets/images/Ramngo Banner.png" 
                   alt="RAMNGO Brand Banner" 
-                  referrerPolicy="no-referrer"
                   className="w-full h-auto block transition-transform duration-700 group-hover:scale-[1.01]" 
                 />
               </div>
@@ -470,13 +471,12 @@ function FeatMockupImage({
     );
   }
 
-  const encodedSrc = encodeURI(src);
-
   return (
     <div className="w-full flex justify-center items-center py-6 relative group">
       <img 
-        src={encodedSrc} 
+        src={src} 
         alt={alt} 
+        referrerPolicy="no-referrer"
         onError={() => setHasError(true)}
         className="w-full max-w-[680px] md:max-w-[75%] lg:max-w-[80%] h-auto object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.08)] transition-transform duration-700 group-hover:scale-[1.01]" 
       />
@@ -485,36 +485,33 @@ function FeatMockupImage({
 }
 
 function LikeButton() {
-  const { likes, views, isLiked, toggleLike } = useProjectStats('ramngo', 124, 1085);
+  const [likes, setLikes] = React.useState(124);
+  const [isLiked, setIsLiked] = React.useState(false);
+
+  const handleLike = () => {
+    if (!isLiked) {
+      setLikes(prev => prev + 1);
+      setIsLiked(true);
+    } else {
+      setLikes(prev => prev - 1);
+      setIsLiked(false);
+    }
+  };
 
   return (
-    <div className="flex items-center gap-1">
-      {/* Views Counter */}
-      <div className="flex items-center gap-1.5 px-3 py-3 text-[#8E8E93] font-medium text-xs select-none">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-70">
-          <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0z" />
-          <circle cx="12" cy="12" r="3" />
-        </svg>
-        <span className="font-mono">{views}</span>
-      </div>
-
-      <div className="w-px h-4 bg-[#E5E5EA]" />
-
-      {/* Like Button */}
-      <button 
-        onClick={toggleLike}
-        className={`flex items-center gap-2 px-4 py-3 rounded-full font-bold text-xs transition-with-cursor cursor-pointer ${
-          isLiked ? "bg-red-50 text-red-500 border border-red-200 shadow-sm" : "bg-transparent text-[#6D6D72] hover:bg-neutral-100"
-        }`}
-      >
-        <Heart 
-          size={18} 
-          fill={isLiked ? "currentColor" : "none"} 
-          className={`transition-transform ${isLiked ? "scale-110" : ""}`} 
-        />
-        <span className="font-mono">{likes}</span>
-      </button>
-    </div>
+    <button 
+      onClick={handleLike}
+      className={`flex items-center gap-2 px-4 py-3 rounded-full font-bold text-xs transition-with-cursor cursor-pointer ${
+        isLiked ? "bg-red-50 text-red-500 border border-red-200 shadow-sm" : "bg-transparent text-[#6D6D72] hover:bg-neutral-100"
+      }`}
+    >
+      <Heart 
+        size={18} 
+        fill={isLiked ? "currentColor" : "none"} 
+        className={`transition-transform ${isLiked ? "scale-110" : ""}`} 
+      />
+      <span>{likes}</span>
+    </button>
   );
 }
 
@@ -656,8 +653,6 @@ function GalleryItem({
     aspectLabel = "TACTILE 4:3";
   }
 
-  const encodedSrc = encodeURI(src);
-
   return (
     <motion.div 
       initial={{ opacity: 0, scale: 0.98 }}
@@ -673,10 +668,10 @@ function GalleryItem({
           </div>
         ) : (
           <img 
-            src={encodedSrc} 
+            src={src} 
             alt={label} 
-            onError={() => setHasError(true)}
             referrerPolicy="no-referrer"
+            onError={() => setHasError(true)}
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
           />
         )}

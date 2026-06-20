@@ -23,19 +23,15 @@ const AppImage = memo(function AppImage({
   loading = 'lazy',
   ...props
 }: AppImageProps) {
-  const safeSrc = useMemo(() => {
-    return src ? encodeURI(src) : '';
-  }, [src]);
-
-  const [imageSrc, setImageSrc] = useState(safeSrc);
+  const [imageSrc, setImageSrc] = useState(src);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
-    setImageSrc(safeSrc);
+    setImageSrc(src);
     setHasError(false);
     setIsLoading(true);
-  }, [safeSrc]);
+  }, [src]);
 
   const handleError = useCallback(() => {
     if (!hasError && imageSrc !== fallbackSrc) {

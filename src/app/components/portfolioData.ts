@@ -168,7 +168,6 @@ export const projects: Project[] = [
   coverImage: "/assets/images/NOMAD/Banner (4).png",
   previewImages: [
     "/assets/images/NOMAD/UIConcept2.png",
-    "/assets/images/NOMAD/ReelAD.png",
     "/assets/images/NOMAD/ReelAd (2).png"
   ],
 
@@ -263,7 +262,7 @@ export const projects: Project[] = [
   previewImages: [
     "/assets/images/Cliptographic_thumbnail.png",
     "/assets/images/Stackhouse/StackhouseReel2-1.png",
-    "/assets/images/NOMAD/ReelAD.png"
+    "/assets/images/NOMAD/ReelAd (2).png"
   ],
   bgColor: '#0A0A0A',
   accentColor: '#FF9F0A'

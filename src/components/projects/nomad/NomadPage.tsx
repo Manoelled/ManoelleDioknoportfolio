@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { ArrowLeft, Share2, Heart, Mail, Compass, ZoomIn, ZoomOut, ChevronLeft, ChevronRight, Monitor, Smartphone } from 'lucide-react';
 
-import { useProjectStats } from '../../../lib/stats';
-
 function BrowserWindow({ 
   children, 
   desktopSrc, 
@@ -29,9 +27,6 @@ function BrowserWindow({
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  const encodedDesktop = desktopSrc ? encodeURI(desktopSrc) : '';
-  const encodedMobile = mobileSrc ? encodeURI(mobileSrc) : '';
-
   if (desktopSrc) {
     if (showFull) {
       return (
@@ -55,7 +50,7 @@ function BrowserWindow({
           <div className="bg-[#F2F2F7]/40 p-2 sm:p-4">
             <div className="w-full bg-white rounded-lg overflow-hidden border border-[#D1D1D6] shadow-sm">
               <img
-                src={encodedDesktop}
+                src={desktopSrc}
                 className="w-full h-auto block"
                 alt={title}
                 referrerPolicy="no-referrer"
@@ -70,10 +65,9 @@ function BrowserWindow({
       return (
         <div className="w-full aspect-[9/16] bg-neutral-950 relative rounded-2ios overflow-hidden border border-[#D1D1D6] shadow-xl">
           <img
-            src={encodedMobile || encodedDesktop}
+            src={mobileSrc || desktopSrc}
             className="absolute inset-0 w-full h-full object-cover"
             alt={title}
-            referrerPolicy="no-referrer"
           />
         </div>
       );
@@ -122,19 +116,17 @@ function BrowserWindow({
           {viewMode === 'desktop' ? (
             <div className="w-full aspect-[16/9] bg-neutral-100 relative rounded-lg overflow-hidden border border-[#D1D1D6] shadow-sm">
               <img
-                src={encodedDesktop}
+                src={desktopSrc}
                 className="absolute inset-0 w-full h-full object-cover"
                 alt={title}
-                referrerPolicy="no-referrer"
               />
             </div>
           ) : (
             <div className="w-full max-w-[325px] aspect-[9/16] bg-neutral-100 relative rounded-2ios overflow-hidden border border-[#D1D1D6] shadow-xl hover:border-neutral-400 transition-all duration-500 my-4">
               <img
-                src={encodedMobile || encodedDesktop}
+                src={mobileSrc || desktopSrc}
                 className="absolute inset-0 w-full h-full object-cover"
                 alt={title}
-                referrerPolicy="no-referrer"
               />
             </div>
           )}
@@ -189,7 +181,6 @@ function GalleryItem({
   }
 
   const isVideo = src.endsWith('.mp4');
-  const encodedSrc = encodeURI(src);
 
   return (
     <motion.div 
@@ -205,7 +196,7 @@ function GalleryItem({
           </div>
         ) : isVideo ? (
           <video
-            src={encodedSrc}
+            src={src}
             autoPlay
             loop
             muted
@@ -215,10 +206,10 @@ function GalleryItem({
           />
         ) : (
           <img 
-            src={encodedSrc} 
+            src={src} 
             alt={label} 
-            onError={() => setHasError(true)}
             referrerPolicy="no-referrer"
+            onError={() => setHasError(true)}
             className={aspect === 'original' ? "w-full h-auto object-contain transition-transform duration-700 group-hover:scale-[1.01]" : "w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"} 
           />
         )}
@@ -258,7 +249,7 @@ export default function NomadPage({ onBack }: NomadPageProps) {
 
   const verticalPosts = [
     { src: '/assets/images/NOMAD/Nomad_LoopReel.mp4', label: 'Wanderlust Kinetic Reel', aspect: '9/16' as const },
-    { src: '/assets/images/NOMAD/ReelAD.png', label: 'Expedition Campaign Ad', aspect: '9/16' as const }
+    { src: '/assets/images/NOMAD/ReelAd (2).png', label: '', aspect: '9/16' as const }
   ];
 
   return (
@@ -557,36 +548,33 @@ export default function NomadPage({ onBack }: NomadPageProps) {
 }
 
 function LikeButton() {
-  const { likes, views, isLiked, toggleLike } = useProjectStats('nomad', 310, 1390);
+  const [likes, setLikes] = React.useState(310);
+  const [isLiked, setIsLiked] = React.useState(false);
+
+  const handleLike = () => {
+    if (!isLiked) {
+      setLikes(prev => prev + 1);
+      setIsLiked(true);
+    } else {
+      setLikes(prev => prev - 1);
+      setIsLiked(false);
+    }
+  };
 
   return (
-    <div className="flex items-center gap-1">
-      {/* Views Counter */}
-      <div className="flex items-center gap-1.5 px-3 py-3 text-[#8E8E93] font-medium text-xs select-none">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-70">
-          <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0z" />
-          <circle cx="12" cy="12" r="3" />
-        </svg>
-        <span className="font-mono">{views}</span>
-      </div>
-
-      <div className="w-px h-4 bg-[#E5E5EA]" />
-
-      {/* Like Button */}
-      <button 
-        onClick={toggleLike}
-        className={`flex items-center gap-2 px-4 py-3 rounded-full font-bold text-xs transition-with-cursor cursor-pointer ${
-          isLiked ? "bg-red-50 text-red-500 border border-red-200 shadow-sm" : "bg-transparent text-[#6D6D72] hover:bg-neutral-100"
-        }`}
-      >
-        <Heart 
-          size={18} 
-          fill={isLiked ? "currentColor" : "none"} 
-          className={`transition-transform ${isLiked ? "scale-110" : ""}`} 
-        />
-        <span className="font-mono">{likes}</span>
-      </button>
-    </div>
+    <button 
+      onClick={handleLike}
+      className={`flex items-center gap-2 px-4 py-3 rounded-full font-bold text-xs transition-with-cursor cursor-pointer ${
+        isLiked ? "bg-red-50 text-red-500 border border-red-200 shadow-sm" : "bg-transparent text-[#6D6D72] hover:bg-neutral-100"
+      }`}
+    >
+      <Heart 
+        size={18} 
+        fill={isLiked ? "currentColor" : "none"} 
+        className={`transition-transform ${isLiked ? "scale-110" : ""}`} 
+      />
+      <span>{likes}</span>
+    </button>
   );
 }
 

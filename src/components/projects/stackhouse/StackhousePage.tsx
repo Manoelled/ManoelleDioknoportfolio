@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { ArrowLeft, Share2, Heart, Mail, Monitor, Smartphone, ZoomIn, ChevronLeft, ChevronRight, MessageCircle, Send, Bookmark } from 'lucide-react';
 
-import { useProjectStats } from '../../../lib/stats';
-
 function BrowserWindow({ 
   children, 
   desktopSrc, 
@@ -183,7 +181,6 @@ function GalleryItem({
   }
 
   const isVideo = src.endsWith('.mp4');
-  const encodedSrc = encodeURI(src);
 
   return (
     <motion.div 
@@ -199,7 +196,7 @@ function GalleryItem({
           </div>
         ) : isVideo ? (
           <video
-            src={encodedSrc}
+            src={src}
             autoPlay
             loop
             muted
@@ -209,8 +206,9 @@ function GalleryItem({
           />
         ) : (
           <img 
-            src={encodedSrc} 
+            src={src} 
             alt={label} 
+            referrerPolicy="no-referrer"
             onError={() => setHasError(true)}
             className={aspect === 'original' ? "w-full h-auto object-contain transition-transform duration-700 group-hover:scale-[1.01]" : "w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"} 
           />
@@ -551,7 +549,11 @@ export default function StackhousePage({ onBack }: StackhousePageProps) {
 
             {/* Description Caption Block */}
             <div className="px-4 pb-4 pt-1 bg-white border-t border-[#F2F2F7] text-left">
-              <p className="text-[9px] font-bold text-neutral-400 tracking-wide uppercase mt-1">JUNE 5, 2026</p>
+              <p className="text-[11px] text-[#1C1C1E] leading-relaxed font-semibold">
+                <span className="font-extrabold mr-1.5 text-neutral-950">stackhouse.cuisine</span>
+                Cohesive structural gastronomy. Our presentation frames culinary design on raw physical matter—combining organic basalt plate pillars and crystalline liquid prisms for a truly monumental sensory narrative.
+              </p>
+              <p className="text-[9px] font-bold text-neutral-400 tracking-wide uppercase mt-2">JUNE 5, 2026</p>
             </div>
           </div>
         </section>
@@ -582,7 +584,7 @@ export default function StackhousePage({ onBack }: StackhousePageProps) {
               <div className="bg-[#F2F2F7]/40 p-2 sm:p-4">
                 <div className="w-full bg-white rounded-lg overflow-hidden border border-[#D1D1D6] shadow-sm aspect-[16/9] relative">
                   <img
-                    src={encodeURI("/assets/images/Stackhouse/StackhouseThumbnailorBanner.png")}
+                    src="/assets/images/Stackhouse/StackhouseThumbnailorBanner.png"
                     className="absolute inset-0 w-full h-full object-cover"
                     alt="Stackhouse Cinematic Banner"
                     referrerPolicy="no-referrer"
@@ -604,7 +606,7 @@ export default function StackhousePage({ onBack }: StackhousePageProps) {
               <div className="bg-[#F2F2F7]/40 p-2 sm:p-4">
                 <div className="w-full bg-white rounded-lg overflow-hidden border border-[#D1D1D6] shadow-sm aspect-[4/3] relative">
                   <img
-                    src={encodeURI("/assets/images/Stackhouse/StackhouseBanner2.png")}
+                    src="/assets/images/Stackhouse/StackhouseBanner2.png"
                     className="absolute inset-0 w-full h-full object-cover"
                     alt="Stackhouse Tactile Banner"
                     referrerPolicy="no-referrer"
@@ -690,35 +692,32 @@ export default function StackhousePage({ onBack }: StackhousePageProps) {
 }
 
 function LikeButton() {
-  const { likes, views, isLiked, toggleLike } = useProjectStats('stackhouse', 215, 1175);
+  const [likes, setLikes] = React.useState(215);
+  const [isLiked, setIsLiked] = React.useState(false);
+
+  const handleLike = () => {
+    if (!isLiked) {
+      setLikes(prev => prev + 1);
+      setIsLiked(true);
+    } else {
+      setLikes(prev => prev - 1);
+      setIsLiked(false);
+    }
+  };
 
   return (
-    <div className="flex items-center gap-1">
-      {/* Views Counter */}
-      <div className="flex items-center gap-1.5 px-3 py-3 text-[#8E8E93] font-medium text-xs select-none">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-70">
-          <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0z" />
-          <circle cx="12" cy="12" r="3" />
-        </svg>
-        <span className="font-mono">{views}</span>
-      </div>
-
-      <div className="w-px h-4 bg-[#E5E5EA]" />
-
-      {/* Like Button */}
-      <button 
-        onClick={toggleLike}
-        className={`flex items-center gap-2 px-4 py-3 rounded-full font-bold text-xs transition-with-cursor cursor-pointer ${
-          isLiked ? "bg-red-50 text-red-500 border border-red-200 shadow-sm" : "bg-transparent text-[#6D6D72] hover:bg-neutral-100"
-        }`}
-      >
-        <Heart 
-          size={18} 
-          fill={isLiked ? "currentColor" : "none"} 
-          className={`transition-transform ${isLiked ? "scale-110" : ""}`} 
-        />
-        <span className="font-mono">{likes}</span>
-      </button>
-    </div>
+    <button 
+      onClick={handleLike}
+      className={`flex items-center gap-2 px-4 py-3 rounded-full font-bold text-xs transition-with-cursor cursor-pointer ${
+        isLiked ? "bg-red-50 text-red-500 border border-red-200 shadow-sm" : "bg-transparent text-[#6D6D72] hover:bg-neutral-100"
+      }`}
+    >
+      <Heart 
+        size={18} 
+        fill={isLiked ? "currentColor" : "none"} 
+        className={`transition-transform ${isLiked ? "scale-110" : ""}`} 
+      />
+      <span>{likes}</span>
+    </button>
   );
 }
