@@ -21,6 +21,8 @@ import FeaturedWorksPage from './components/FeaturedWorksPage';
 import Footer from './components/Footer';
 import ScrollProgress from './components/ui/ScrollProgress';
 import { Project } from './app/components/portfolioData';
+import AIOptimizedWorkflow from './components/AIOptimizedWorkflow';
+import DesignDiaryNotebook from './components/DesignDiaryNotebook';
 
 export default function App() {
   const [currentView, setCurrentView] = useState<string>('portfolio'); // 'portfolio' | 'client-portal' | 'featured-works' | brand-ids
@@ -90,6 +92,9 @@ export default function App() {
           {/* Main Single Page Contents */}
           <HeroSection />
           
+          {/* Tactile Design Diary Notebook Section */}
+          <DesignDiaryNotebook />
+
           <PortfolioSection 
             limit={3}
             onViewMoreClick={() => navigateToView('featured-works')}
@@ -103,6 +108,9 @@ export default function App() {
             onBackToPortfolio={handleScrollToTop} 
             onProjectClick={(projectId) => navigateToView(projectId)} 
           />
+
+          {/* AI Optimized Workflow section describing creative practice evolution */}
+          <AIOptimizedWorkflow />
 
           <Footer />
         </>

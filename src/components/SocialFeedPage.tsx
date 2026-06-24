@@ -1077,8 +1077,8 @@ export default function SocialFeedPage({ onBackToPortfolio, onProjectClick }: So
           <h2 className="text-3xl sm:text-5xl font-extrabold text-neutral-900 tracking-tight mb-3 font-sans">
             Social Media Content
           </h2>
-          <p className="text-sm text-neutral-500 font-medium max-w-xl mx-auto">
-            Test the live mobile design layouts inside the interactive iPhone frame · Click any post to view tools and creative specifications
+          <p className="text-base text-[#6D6D72] leading-relaxed max-w-xl mx-auto font-sans font-normal">
+            A curated feed showcasing social media content, campaigns, and creative experiments. Every post was designed and produced by me.
           </p>
         </div>
 

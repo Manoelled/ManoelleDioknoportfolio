@@ -331,3 +331,120 @@ img {
   writing-mode: vertical-rl;
 }
 
+/* Tactile Notebook textures and layers designed to be safely preserved during page flip DOM element cloning */
+.page-left-texture {
+  background-image: url('/assets/images/PageL.png');
+  background-size: cover;
+  background-position: center;
+  background-color: #FAF8F5; /* Fallback tactile paper color */
+}
+
+.page-right-texture {
+  background-image: url('/assets/images/PageR.png');
+  background-size: cover;
+  background-position: center;
+  background-color: #FAF8F5; /* Fallback tactile paper color */
+}
+
+.tape-texture {
+  background-image: linear-gradient(to right, transparent 0%, rgba(255,255,255,0.2) 30%, transparent 60%);
+  clip-path: polygon(1% 15%, 3% 2%, 98% 3%, 99% 18%, 97% 85%, 99% 98%, 2% 97%, 3% 85%);
+}
+
+.sticky-preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.sticky-corner-bg {
+  clip-path: polygon(0 100%, 100% 0, 100% 100%);
+}
+
+.sticky-corner-fold {
+  clip-path: polygon(0 100%, 100% 0, 0 0);
+}
+
+.notepad-lines {
+  background-image: repeating-linear-gradient(#FAFCFD 0px, #FAFCFD 1px, transparent 1px, transparent 18px);
+  background-size: 100% 18px;
+}
+
+.page-1-texture {
+  background-image: url('/assets/images/NotebookPage1.png');
+  background-size: cover;
+  background-position: center;
+  background-color: #FAF8F5;
+}
+
+.page-2-texture {
+  background-image: url('/assets/images/NotebookPage2.png');
+  background-size: cover;
+  background-position: center;
+  background-color: #FAF8F5;
+}
+
+.page-3-texture {
+  background-image: url('/assets/images/NotebookPage3.png');
+  background-size: cover;
+  background-position: center;
+  background-color: #FAF8F5;
+}
+
+.page-4-texture {
+  background-image: url('/assets/images/NotebookPage4.png');
+  background-size: cover;
+  background-position: center;
+  background-color: #FAF8F5;
+}
+
+.page-5-texture {
+  background-image: url('/assets/images/NotebookPage5.png');
+  background-size: cover;
+  background-position: center;
+  background-color: #FAF8F5;
+}
+
+.page-6-texture {
+  background-image: url('/assets/images/NotebookPage6.png');
+  background-size: cover;
+  background-position: center;
+  background-color: #FAF8F5;
+}
+
+.page-7-texture {
+  background-image: url('/assets/images/NotebookPage7.png');
+  background-size: cover;
+  background-position: center;
+  background-color: #FAF8F5;
+}
+
+.page-8-texture {
+  background-image: url('/assets/images/NotebookPage8.png');
+  background-size: cover;
+  background-position: center;
+  background-color: #FAF8F5;
+}
+
+.page-9-texture {
+  background-image: url('/assets/images/NotebookPage9.png');
+  background-size: cover;
+  background-position: center;
+  background-color: #FAF8F5;
+}
+
+.page-10-texture {
+  background-image: url('/assets/images/NotebookPage10.png');
+  background-size: cover;
+  background-position: center;
+  background-color: #FAF8F5;
+}
+
+@keyframes chameleonHue {
+  0%   { filter: hue-rotate(0deg)   saturate(1.4); }
+  100% { filter: hue-rotate(360deg) saturate(1.4); }
+}
+
+.chameleon-head {
+  animation: chameleonHue 8s linear infinite;
+}
+
+

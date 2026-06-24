@@ -113,7 +113,7 @@ const POSITIONS: PositionStyle[] = [
 
 export default function HeroSection() {
   const [isVisible, setIsVisible] = useState(false);
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(1);
   const [isHovered, setIsHovered] = useState(false);
   const autoShuffleTimer = useRef<NodeJS.Timeout | null>(null);
 
