@@ -438,6 +438,20 @@ img {
   background-color: #FAF8F5;
 }
 
+.page-11-texture {
+  background-image: url('/assets/images/NotebookPage11.png');
+  background-size: cover;
+  background-position: center;
+  background-color: #FAF8F5;
+}
+
+.page-12-texture {
+  background-image: url('/assets/images/NotebookPage12.png');
+  background-size: cover;
+  background-position: center;
+  background-color: #FAF8F5;
+}
+
 @keyframes chameleonHue {
   0%   { filter: hue-rotate(0deg)   saturate(1.4); }
   100% { filter: hue-rotate(360deg) saturate(1.4); }

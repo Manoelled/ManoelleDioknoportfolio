@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import HeroSection from './components/HeroSection';
 import PortfolioSection from './components/PortfolioSection';
@@ -17,6 +17,8 @@ import StackhousePage from './components/projects/stackhouse/StackhousePage';
 import CreativeWorksPage from './components/projects/creativeworks/CreativeWorksPage';
 import DesignSentimentsPage from './components/projects/designsentiments/DesignSentimentsPage';
 import CliptographicPage from './components/projects/cliptographic/CliptographicPage';
+import ClipsPage from './components/projects/clips/ClipsPage';
+import AderizetestPage from './components/AderizetestPage';
 import FeaturedWorksPage from './components/FeaturedWorksPage';
 import Footer from './components/Footer';
 import ScrollProgress from './components/ui/ScrollProgress';
@@ -32,7 +34,50 @@ export default function App() {
     setPreviousView(currentView);
     setCurrentView(view);
     window.scrollTo({ top: 0, behavior: 'instant' });
+    if (view === 'clips') {
+      window.history.pushState(null, '', '/clips');
+    } else if (view === 'aderizetest') {
+      window.history.pushState(null, '', '/aderizetest');
+    } else if (view === 'portfolio') {
+      window.history.pushState(null, '', '/');
+    } else {
+      window.history.pushState(null, '', `#${view}`);
+    }
   };
+
+  useEffect(() => {
+    const handleLocationChange = () => {
+      const path = window.location.pathname;
+      const hash = window.location.hash;
+      if (path === '/clips' || hash === '#clips') {
+        setCurrentView('clips');
+      } else if (path === '/aderizetest' || hash === '#aderizetest') {
+        setCurrentView('aderizetest');
+      } else if (hash) {
+        const viewId = hash.replace('#', '');
+        if (viewId) {
+          setCurrentView(viewId);
+        }
+      } else {
+        // Only reset to portfolio if currently on /clips, /aderizetest or a hash route
+        const currentPath = window.location.pathname;
+        if (currentPath === '/clips') {
+          setCurrentView('clips');
+        } else if (currentPath === '/aderizetest') {
+          setCurrentView('aderizetest');
+        } else if (currentPath === '/') {
+          setCurrentView('portfolio');
+        }
+      }
+    };
+    handleLocationChange();
+    window.addEventListener('hashchange', handleLocationChange);
+    window.addEventListener('popstate', handleLocationChange);
+    return () => {
+      window.removeEventListener('hashchange', handleLocationChange);
+      window.removeEventListener('popstate', handleLocationChange);
+    };
+  }, []);
 
   const handleScrollToTop = () => {
     window.scrollTo({
@@ -48,12 +93,15 @@ export default function App() {
     setCurrentView(previousView);
     window.scrollTo({ top: 0, behavior: 'instant' });
     if (previousView === 'portfolio') {
+      window.history.pushState(null, '', '/');
       setTimeout(() => {
         const portfolioSec = document.getElementById('portfolio');
         if (portfolioSec) {
           portfolioSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
       }, 100);
+    } else {
+      window.history.pushState(null, '', `#${previousView}`);
     }
   };
 
@@ -133,6 +181,10 @@ export default function App() {
         <DesignSentimentsPage onBack={returnFromBrand} />
       ) : currentView === 'cliptographic' ? (
         <CliptographicPage onBack={returnFromBrand} />
+      ) : currentView === 'clips' ? (
+        <ClipsPage onBack={returnFromBrand} />
+      ) : currentView === 'aderizetest' ? (
+        <AderizetestPage />
       ) : (
         <div className="pt-16 sm:pt-20">
           <ClientPortalPage onBackToPortfolio={() => navigateToView('portfolio')} />

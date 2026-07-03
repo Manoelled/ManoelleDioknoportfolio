@@ -177,7 +177,7 @@ export default function DesignDiaryNotebook() {
     };
   }, []);
 
-  const totalSpreads = 5;
+  const totalSpreads = 6;
 
   const handleNext = () => {
     if (bookRef.current) {
@@ -370,6 +370,15 @@ export default function DesignDiaryNotebook() {
         return (
           <div className="relative w-full h-full select-none" />
         );
+      // SPREAD 6 (Pages 11 & 12) - New Minimalism exploration pages (Clean page assets)
+      case 11:
+        return (
+          <div className="relative w-full h-full select-none" />
+        );
+      case 12:
+        return (
+          <div className="relative w-full h-full select-none" />
+        );
       default:
         return null;
     }
@@ -497,11 +506,17 @@ export default function DesignDiaryNotebook() {
               <Page position="right" bgClass="page-8-texture">
                 {renderPageContent(8)}
               </Page>
-              <Page position="left" bgClass="page-9-texture">
+              <Page position="left" bgClass="page-11-texture">
                 {renderPageContent(9)}
               </Page>
-              <Page position="right" bgClass="page-10-texture">
+              <Page position="right" bgClass="page-12-texture">
                 {renderPageContent(10)}
+              </Page>
+              <Page position="left" bgClass="page-9-texture">
+                {renderPageContent(11)}
+              </Page>
+              <Page position="right" bgClass="page-10-texture">
+                {renderPageContent(12)}
               </Page>
             </HTMLFlipBook>
 
@@ -526,9 +541,9 @@ export default function DesignDiaryNotebook() {
           { label: 'Core Principles', spread: 1 },
           { label: 'Modern Journalism', spread: 2 },
           { label: 'Grunge Print', spread: 3 },
-          { label: 'Liquid Morphism', spread: 4 },
-          { label: 'Cybercigilism', spread: 5 },
-          { label: 'Asian Core', spread: null, status: 'Not yet there' },
+          { label: 'Glass Morphism', spread: 4 },
+          { label: 'Minimalism', spread: 5 },
+          { label: 'Cybersigilism', spread: 6 },
         ].map((item, index) => {
           const isActive = item.spread !== null && currentSpread === item.spread;
           const isComingSoon = item.spread === null;
