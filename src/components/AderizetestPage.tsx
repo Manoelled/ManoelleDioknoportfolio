@@ -24,11 +24,6 @@ export default function AderizetestPage() {
           style={{ width: 'auto', height: 'auto' }}
         />
       </motion.div>
-
-      {/* Tiny high-end metadata marker in margins */}
-      <div className="absolute bottom-6 font-mono text-[9px] text-neutral-600 tracking-[0.25em] uppercase pointer-events-none">
-        M. DIOKNO // CAMPAIGN TEST // ADERIZETEST
-      </div>
     </div>
   );
 }
