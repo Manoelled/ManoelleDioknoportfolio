@@ -160,7 +160,7 @@ export default function DesignDiaryNotebook() {
     const handleResize = () => {
       if (containerRef.current) {
         const containerWidth = containerRef.current.offsetWidth;
-        const targetWidth = 1118; // Expanded bounding box spacing (860 * 1.3)
+        const targetWidth = 1342; // Expanded bounding box spacing (1118 * 1.2)
         if (containerWidth < targetWidth) {
           setScale(containerWidth / targetWidth);
         } else {
@@ -410,15 +410,15 @@ export default function DesignDiaryNotebook() {
       {/* Main scaling context wrapper */}
       <div 
         ref={containerRef}
-        className="w-full max-w-[1118px] flex justify-center items-center select-none transition-all duration-300"
-        style={{ minHeight: `${593.6 * scale}px`, height: `${593.6 * scale}px` }}
+        className="w-full max-w-[1342px] flex justify-center items-center select-none transition-all duration-300"
+        style={{ minHeight: `${712.3 * scale}px`, height: `${712.3 * scale}px` }}
       >
         <div 
           className="relative transition-transform duration-300 ease-out origin-center flex-shrink-0"
           style={{
-            width: '1092px',
-            minWidth: '1092px',
-            maxWidth: '1092px',
+            width: '1310px',
+            minWidth: '1310px',
+            maxWidth: '1310px',
             aspectRatio: '2789 / 1516',
             transform: `scale(${scale})`,
           }}
@@ -461,13 +461,13 @@ export default function DesignDiaryNotebook() {
           >
             <HTMLFlipBook
               ref={bookRef}
-              width={503}
-              height={569}
+              width={604}
+              height={683}
               size="stretch"
-              minWidth={503}
-              maxWidth={503}
-              minHeight={569}
-              maxHeight={569}
+              minWidth={604}
+              maxWidth={604}
+              minHeight={683}
+              maxHeight={683}
               drawShadow={true}
               flippingTime={600}
               useMouseEvents={true}
