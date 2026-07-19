@@ -57,7 +57,7 @@ interface Client {
 const clientDirectory: Client[] = [
   {
     id: 'antpet-client',
-    name: 'ANTPET Art Direction Studio',
+    name: 'Ant Pet Clinic Design Deliverables',
     codename: 'ANTPET',
     passwordKey: 'antpet',
     description: 'Pristine 3D fold-out bifold and trifold printed brochure configurations, utilizing negative space and fine margins.',
@@ -294,7 +294,7 @@ export default function ClientPortalPage({ onBackToPortfolio }: ClientPortalProp
               <div className="flex-1 flex items-center gap-2 max-w-xl mx-auto bg-white/10 rounded-full px-4 py-1.5 border border-white/15 text-xs text-neutral-300 justify-center select-none font-medium font-mono truncate">
                 <Unlock className="w-3.5 h-3.5 text-green-400 flex-shrink-0" />
                 <span className="text-green-400 font-bold uppercase text-[9px] tracking-wider bg-green-500/10 px-1.5 py-0.5 rounded-md flex-shrink-0">SECURE DRAFT</span>
-                <span className="truncate">manoellediokno.studio/{unlockedClient.id}/{activeTab === 'logo' ? 'branding' : activeTab === 'social' ? 'social' : 'website'}</span>
+                <span className="truncate">secured access</span>
               </div>
 
               <div className="flex items-center gap-2 flex-shrink-0">
