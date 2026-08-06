@@ -25,6 +25,7 @@ import ScrollProgress from './components/ui/ScrollProgress';
 import { Project } from './app/components/portfolioData';
 import AIOptimizedWorkflow from './components/AIOptimizedWorkflow';
 import DesignDiaryNotebook from './components/DesignDiaryNotebook';
+import InteractiveExperiencesSection from './components/InteractiveExperiencesSection';
 
 export default function App() {
   const [currentView, setCurrentView] = useState<string>('portfolio'); // 'portfolio' | 'client-portal' | 'featured-works' | brand-ids
@@ -156,6 +157,9 @@ export default function App() {
             onBackToPortfolio={handleScrollToTop} 
             onProjectClick={(projectId) => navigateToView(projectId)} 
           />
+
+          {/* Interactive Experiences Section featuring live website previews */}
+          <InteractiveExperiencesSection />
 
           {/* AI Optimized Workflow section describing creative practice evolution */}
           <AIOptimizedWorkflow />
