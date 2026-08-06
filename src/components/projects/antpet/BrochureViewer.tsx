@@ -2,12 +2,12 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, useMotionValue, animate } from 'motion/react';
 import { RotateCw, ArrowRightLeft, ZoomIn, ZoomOut, Maximize2, Eye } from 'lucide-react';
 
-const getImagePath = (path: string) => {
-  const base = import.meta.env.BASE_URL || '/';
-  const cleanBase = base.endsWith('/') ? base : base + '/';
-  const cleanPath = path.startsWith('/') ? path.slice(1) : path;
-  return `${cleanBase}${cleanPath}`;
-};
+import flyerInCenter from '/flyer_in_center.png';
+import flyerOutCenter from '/flyer_out_center.png';
+import flyerInLeft from '/flyer_in_left.png';
+import flyerOutLeft from '/flyer_out_left.png';
+import flyerInRight from '/flyer_in_right.png';
+import flyerOutRight from '/flyer_out_right.png';
 
 export default function BrochureViewer() {
   // Fold states: true = open/unfolded (0deg), false = closed/folded (110deg or -110deg)
@@ -222,14 +222,14 @@ export default function BrochureViewer() {
               <div 
                 className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-white overflow-hidden"
                 style={{
-                  backgroundImage: `url("${getImagePath('flyer_in_center.png')}")`,
+                  backgroundImage: `url("${flyerInCenter}")`,
                   backfaceVisibility: 'hidden',
                   WebkitBackfaceVisibility: 'hidden',
                   transform: 'translateZ(2px)'
                 }}
               >
                 <img 
-                  src={getImagePath('flyer_in_center.png')} 
+                  src={flyerInCenter} 
                   alt="Flyer Inside Center" 
                   className="w-full h-full object-cover pointer-events-none select-none block"
                   loading="eager"
@@ -240,14 +240,14 @@ export default function BrochureViewer() {
               <div 
                 className="absolute inset-0 bg-cover bg-center bg-no-repeat border border-neutral-300/50 bg-white overflow-hidden"
                 style={{
-                  backgroundImage: `url("${getImagePath('flyer_out_center.png')}")`,
+                  backgroundImage: `url("${flyerOutCenter}")`,
                   backfaceVisibility: 'hidden',
                   WebkitBackfaceVisibility: 'hidden',
                   transform: 'rotateY(180deg) translateZ(2px)'
                 }}
               >
                 <img 
-                  src={getImagePath('flyer_out_center.png')} 
+                  src={flyerOutCenter} 
                   alt="Flyer Outside Center" 
                   className="w-full h-full object-cover pointer-events-none select-none block"
                   loading="eager"
@@ -273,14 +273,14 @@ export default function BrochureViewer() {
                 <div 
                   className="absolute inset-0 bg-cover bg-center bg-no-repeat border border-neutral-300/50 bg-white overflow-hidden"
                   style={{
-                    backgroundImage: `url("${getImagePath('flyer_in_left.png')}")`,
+                    backgroundImage: `url("${flyerInLeft}")`,
                     backfaceVisibility: 'hidden',
                     WebkitBackfaceVisibility: 'hidden',
                     transform: 'translateZ(2px)'
                   }}
                 >
                   <img 
-                    src={getImagePath('flyer_in_left.png')} 
+                    src={flyerInLeft} 
                     alt="Flyer Inside Left" 
                     className="w-full h-full object-cover pointer-events-none select-none block"
                     loading="eager"
@@ -291,14 +291,14 @@ export default function BrochureViewer() {
                 <div 
                   className="absolute inset-0 bg-cover bg-center bg-no-repeat border border-neutral-300/50 bg-white overflow-hidden"
                   style={{
-                    backgroundImage: `url("${getImagePath('flyer_out_left.png')}")`,
+                    backgroundImage: `url("${flyerOutLeft}")`,
                     backfaceVisibility: 'hidden',
                     WebkitBackfaceVisibility: 'hidden',
                     transform: 'rotateY(180deg) translateZ(2px)'
                   }}
                 >
                   <img 
-                    src={getImagePath('flyer_out_left.png')} 
+                    src={flyerOutLeft} 
                     alt="Flyer Outside Left Cover" 
                     className="w-full h-full object-cover pointer-events-none select-none block"
                     loading="eager"
@@ -326,14 +326,14 @@ export default function BrochureViewer() {
                 <div 
                   className="absolute inset-0 bg-cover bg-center bg-no-repeat border border-neutral-300/50 bg-white overflow-hidden"
                   style={{
-                    backgroundImage: `url("${getImagePath('flyer_in_right.png')}")`,
+                    backgroundImage: `url("${flyerInRight}")`,
                     backfaceVisibility: 'hidden',
                     WebkitBackfaceVisibility: 'hidden',
                     transform: 'translateZ(2px)'
                   }}
                 >
                   <img 
-                    src={getImagePath('flyer_in_right.png')} 
+                    src={flyerInRight} 
                     alt="Flyer Inside Right" 
                     className="w-full h-full object-cover pointer-events-none select-none block"
                     loading="eager"
@@ -344,14 +344,14 @@ export default function BrochureViewer() {
                 <div 
                   className="absolute inset-0 bg-cover bg-center bg-no-repeat border border-neutral-300/50 bg-white overflow-hidden"
                   style={{
-                    backgroundImage: `url("${getImagePath('flyer_out_right.png')}")`,
+                    backgroundImage: `url("${flyerOutRight}")`,
                     backfaceVisibility: 'hidden',
                     WebkitBackfaceVisibility: 'hidden',
                     transform: 'rotateY(180deg) translateZ(2px)'
                   }}
                 >
                   <img 
-                    src={getImagePath('flyer_out_right.png')} 
+                    src={flyerOutRight} 
                     alt="Flyer Outside Right" 
                     className="w-full h-full object-cover pointer-events-none select-none block"
                     loading="eager"
