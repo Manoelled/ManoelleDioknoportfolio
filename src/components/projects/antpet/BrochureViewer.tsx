@@ -2,12 +2,12 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, useMotionValue, animate } from 'motion/react';
 import { RotateCw, ArrowRightLeft, ZoomIn, ZoomOut, Maximize2, Eye } from 'lucide-react';
 
-import flyerInCenter from '/flyer_in_center.png';
-import flyerOutCenter from '/flyer_out_center.png';
-import flyerInLeft from '/flyer_in_left.png';
-import flyerOutLeft from '/flyer_out_left.png';
-import flyerInRight from '/flyer_in_right.png';
-import flyerOutRight from '/flyer_out_right.png';
+import flyerInCenter from '/MidINside.png';
+import flyerOutCenter from '/MidOutside.png';
+import flyerInLeft from '/LeftInside.png';
+import flyerOutLeft from '/LeftOutside.png';
+import flyerInRight from '/RightInside.png';
+import flyerOutRight from '/RightOutside.png';
 
 export default function BrochureViewer() {
   // Fold states: true = open/unfolded (0deg), false = closed/folded (110deg or -110deg)
