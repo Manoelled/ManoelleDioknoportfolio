@@ -2,6 +2,13 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, useMotionValue, animate } from 'motion/react';
 import { RotateCw, ArrowRightLeft, ZoomIn, ZoomOut, Maximize2, Eye } from 'lucide-react';
 
+const getImagePath = (path: string) => {
+  const base = import.meta.env.BASE_URL || '/';
+  const cleanBase = base.endsWith('/') ? base : base + '/';
+  const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+  return `${cleanBase}${cleanPath}`;
+};
+
 export default function BrochureViewer() {
   // Fold states: true = open/unfolded (0deg), false = closed/folded (110deg or -110deg)
   const [leftOpen, setLeftOpen] = useState(false);
@@ -213,25 +220,39 @@ export default function BrochureViewer() {
             >
               {/* Front of Center Panel (Inside Center) */}
               <div 
-                className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-white"
+                className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-white overflow-hidden"
                 style={{
-                  backgroundImage: `url("/flyer_in_center.png")`,
+                  backgroundImage: `url("${getImagePath('flyer_in_center.png')}")`,
                   backfaceVisibility: 'hidden',
                   WebkitBackfaceVisibility: 'hidden',
                   transform: 'translateZ(2px)'
                 }}
-              />
+              >
+                <img 
+                  src={getImagePath('flyer_in_center.png')} 
+                  alt="Flyer Inside Center" 
+                  className="w-full h-full object-cover pointer-events-none select-none block"
+                  loading="eager"
+                />
+              </div>
 
               {/* Back of Center Panel (Outside Center) */}
               <div 
-                className="absolute inset-0 bg-cover bg-center bg-no-repeat border border-neutral-300/50 bg-white"
+                className="absolute inset-0 bg-cover bg-center bg-no-repeat border border-neutral-300/50 bg-white overflow-hidden"
                 style={{
-                  backgroundImage: `url("/flyer_out_center.png")`,
+                  backgroundImage: `url("${getImagePath('flyer_out_center.png')}")`,
                   backfaceVisibility: 'hidden',
                   WebkitBackfaceVisibility: 'hidden',
                   transform: 'rotateY(180deg) translateZ(2px)'
                 }}
-              />
+              >
+                <img 
+                  src={getImagePath('flyer_out_center.png')} 
+                  alt="Flyer Outside Center" 
+                  className="w-full h-full object-cover pointer-events-none select-none block"
+                  loading="eager"
+                />
+              </div>
 
               {/* =======================================================
                   LEFT PANEL (Left Hinge Fold)
@@ -250,25 +271,39 @@ export default function BrochureViewer() {
 
                 {/* Left Panel FRONT (Inside Left spread) */}
                 <div 
-                  className="absolute inset-0 bg-cover bg-center bg-no-repeat border border-neutral-300/50 bg-white"
+                  className="absolute inset-0 bg-cover bg-center bg-no-repeat border border-neutral-300/50 bg-white overflow-hidden"
                   style={{
-                    backgroundImage: `url("/flyer_in_left.png")`,
+                    backgroundImage: `url("${getImagePath('flyer_in_left.png')}")`,
                     backfaceVisibility: 'hidden',
                     WebkitBackfaceVisibility: 'hidden',
                     transform: 'translateZ(2px)'
                   }}
-                />
+                >
+                  <img 
+                    src={getImagePath('flyer_in_left.png')} 
+                    alt="Flyer Inside Left" 
+                    className="w-full h-full object-cover pointer-events-none select-none block"
+                    loading="eager"
+                  />
+                </div>
 
                 {/* Left Panel BACK (Outside Left - MAIN COVER ARTWORK) */}
                 <div 
-                  className="absolute inset-0 bg-cover bg-center bg-no-repeat border border-neutral-300/50 bg-white"
+                  className="absolute inset-0 bg-cover bg-center bg-no-repeat border border-neutral-300/50 bg-white overflow-hidden"
                   style={{
-                    backgroundImage: `url("/flyer_out_left.png")`,
+                    backgroundImage: `url("${getImagePath('flyer_out_left.png')}")`,
                     backfaceVisibility: 'hidden',
                     WebkitBackfaceVisibility: 'hidden',
                     transform: 'rotateY(180deg) translateZ(2px)'
                   }}
-                />
+                >
+                  <img 
+                    src={getImagePath('flyer_out_left.png')} 
+                    alt="Flyer Outside Left Cover" 
+                    className="w-full h-full object-cover pointer-events-none select-none block"
+                    loading="eager"
+                  />
+                </div>
               </div>
 
 
@@ -289,25 +324,39 @@ export default function BrochureViewer() {
 
                 {/* Right Panel FRONT (Inside Right spread) */}
                 <div 
-                  className="absolute inset-0 bg-cover bg-center bg-no-repeat border border-neutral-300/50 bg-white"
+                  className="absolute inset-0 bg-cover bg-center bg-no-repeat border border-neutral-300/50 bg-white overflow-hidden"
                   style={{
-                    backgroundImage: `url("/flyer_in_right.png")`,
+                    backgroundImage: `url("${getImagePath('flyer_in_right.png')}")`,
                     backfaceVisibility: 'hidden',
                     WebkitBackfaceVisibility: 'hidden',
                     transform: 'translateZ(2px)'
                   }}
-                />
+                >
+                  <img 
+                    src={getImagePath('flyer_in_right.png')} 
+                    alt="Flyer Inside Right" 
+                    className="w-full h-full object-cover pointer-events-none select-none block"
+                    loading="eager"
+                  />
+                </div>
 
                 {/* Right Panel BACK (Outside Right) */}
                 <div 
-                  className="absolute inset-0 bg-cover bg-center bg-no-repeat border border-neutral-300/50 bg-white"
+                  className="absolute inset-0 bg-cover bg-center bg-no-repeat border border-neutral-300/50 bg-white overflow-hidden"
                   style={{
-                    backgroundImage: `url("/flyer_out_right.png")`,
+                    backgroundImage: `url("${getImagePath('flyer_out_right.png')}")`,
                     backfaceVisibility: 'hidden',
                     WebkitBackfaceVisibility: 'hidden',
                     transform: 'rotateY(180deg) translateZ(2px)'
                   }}
-                />
+                >
+                  <img 
+                    src={getImagePath('flyer_out_right.png')} 
+                    alt="Flyer Outside Right" 
+                    className="w-full h-full object-cover pointer-events-none select-none block"
+                    loading="eager"
+                  />
+                </div>
               </div>
 
             </div>
