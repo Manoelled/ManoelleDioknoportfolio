@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence, useMotionValue, animate } from 'motion/react';
+import { motion, useMotionValue, animate } from 'motion/react';
 import { RotateCw, ArrowRightLeft, ZoomIn, ZoomOut, Maximize2, Eye } from 'lucide-react';
 
 export default function BrochureViewer() {
@@ -131,26 +131,22 @@ export default function BrochureViewer() {
     setHasPanned(false);
   };
 
-  // Fold all the way in: Right panel folds flat first (-178deg), Left panel folds flat over it (174deg) to sit on the front
-  const leftAngle = leftOpen ? 0 : 174;
+  // Fold angles & local Z offsets:
+  // Right panel folds underneath first (-178deg)
+  // Left panel folds over on top (175deg)
   const rightAngle = rightOpen ? 0 : -178;
+  const leftAngle = leftOpen ? 0 : 175;
 
-  // Perfect 3D visibility gating to eliminate bleed-through and overlap artifacts
-  const isCenterFrontVisible = !isFlipped;
-  const isCenterBackVisible = isFlipped;
+  // Boosted local Z-offsets when folded:
+  // In local panel coordinates after rotateY(~180deg), negative translateZ pushes the panel forward toward the camera.
+  // Right panel sits at -8px (in front of center panel).
+  // Left panel sits at -16px (in front of right panel).
+  const rightZ = rightOpen ? '0px' : '-8px';
+  const leftZ = leftOpen ? '0px' : (rightOpen ? '-8px' : '-16px');
 
-  const isLeftFrontVisible = !isFlipped && leftOpen;
-  const isLeftBackVisible = isFlipped ? leftOpen : !leftOpen;
-
-  const isRightFrontVisible = !isFlipped && rightOpen;
-  const isRightBackVisible = isFlipped ? rightOpen : !rightOpen;
-
-  // Dynamic z-index and pointer-events to prevent click blocking when folded
-  const leftZIndex = (!leftOpen && !rightOpen && !isFlipped) ? 20 : 10;
-  const rightZIndex = (!leftOpen && !rightOpen && !isFlipped) ? 5 : (!rightOpen ? 12 : 10);
-  
-  const leftPointerEvents = (isFlipped && !leftOpen) ? 'none' : 'auto';
-  const rightPointerEvents = (!leftOpen && !rightOpen && !isFlipped) ? 'none' : 'auto';
+  // Dynamic zIndex ensures proper compositing order during 3D transforms
+  const rightZIndex = rightOpen ? 2 : 10;
+  const leftZIndex = leftOpen ? 2 : (rightOpen ? 12 : 20);
 
   return (
     <div ref={containerRef} className="flex-1 flex flex-col bg-white text-neutral-800 font-sans select-none min-h-[500px] relative justify-between py-8 sm:py-12 px-4">
@@ -207,166 +203,72 @@ export default function BrochureViewer() {
                 CENTER PANEL (Stationary Base)
                 ======================================================= */}
             <div 
-              className="absolute w-[240px] h-[556px] bg-[#FAF9F6] border border-neutral-300 shadow-xl transition-all duration-500 select-none cursor-default"
+              className="absolute w-[240px] h-[556px] border border-neutral-300 shadow-2xl transition-all duration-500 select-none cursor-default bg-white"
               style={{
                 transformStyle: 'preserve-3d',
                 transform: 'translateZ(0px)',
-                boxShadow: '0 20px 50px -10px rgba(0,0,0,0.15), inset 0 0 12px rgba(0,0,0,0.02)'
+                zIndex: 1,
+                boxShadow: '0 20px 50px -10px rgba(0,0,0,0.18)'
               }}
             >
-              {/* Corner alignment marks */}
-              <div className="absolute top-2 left-2 w-2 h-2 border-t border-l border-neutral-300" />
-              <div className="absolute top-2 right-2 w-2 h-2 border-t border-r border-neutral-300" />
-              <div className="absolute bottom-2 left-2 w-2 h-2 border-b border-l border-neutral-300" />
-              <div className="absolute bottom-2 right-2 w-2 h-2 border-b border-r border-neutral-300" />
-
-              {/* Front of Center Panel (Interior Center) */}
+              {/* Front of Center Panel (Inside Center) */}
               <div 
-                className="absolute inset-0 flex flex-col justify-between p-5 text-neutral-800"
+                className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-white"
                 style={{
+                  backgroundImage: `url("/flyer_in_center.png")`,
                   backfaceVisibility: 'hidden',
-                  transform: 'translateZ(1px)', // Small positive offset to eliminate all z-fighting
-                  opacity: isCenterFrontVisible ? 1 : 0,
-                  visibility: isCenterFrontVisible ? 'visible' : 'hidden',
-                  transition: 'opacity 500ms ease-out, visibility 500ms ease-out'
+                  WebkitBackfaceVisibility: 'hidden',
+                  transform: 'translateZ(2px)'
                 }}
-              >
-                <div className="space-y-1">
-                  <span className="font-mono text-[8px] uppercase tracking-widest text-neutral-400 font-semibold block">[02 / CENTER SPREAD]</span>
-                  <div className="w-full h-[1px] bg-neutral-200 mt-2" />
-                </div>
-                <div className="space-y-2">
-                  <h3 className="text-sm font-bold tracking-tight text-neutral-900 leading-tight uppercase">Center Segment</h3>
-                  <p className="text-[10px] text-neutral-400 leading-relaxed font-mono">
-                    This stationary panel provides the visual anchor for the 3-fold presentation. Folds on both left and right edges hinge outward to create a continuous flat spread.
-                  </p>
-                </div>
-                <div className="font-mono text-[8px] text-neutral-400 flex justify-between items-center">
-                  <span>SPEC: ANTPET</span>
-                  <span>BASE GEOMETRY</span>
-                </div>
-              </div>
+              />
 
               {/* Back of Center Panel (Outside Center) */}
               <div 
-                className="absolute inset-0 flex flex-col justify-between p-5 text-neutral-800 bg-[#FAF9F6] border border-neutral-300"
+                className="absolute inset-0 bg-cover bg-center bg-no-repeat border border-neutral-300/50 bg-white"
                 style={{
-                  transform: 'rotateY(180deg) translateZ(1px)', // Rotated & offset
+                  backgroundImage: `url("/flyer_out_center.png")`,
                   backfaceVisibility: 'hidden',
-                  opacity: isCenterBackVisible ? 1 : 0,
-                  visibility: isCenterBackVisible ? 'visible' : 'hidden',
-                  transition: 'opacity 500ms ease-out, visibility 500ms ease-out'
+                  WebkitBackfaceVisibility: 'hidden',
+                  transform: 'rotateY(180deg) translateZ(2px)'
                 }}
-              >
-                <div className="space-y-1">
-                  <span className="font-mono text-[8px] uppercase tracking-widest text-neutral-400 font-semibold block">[BACKSIDE // CENTER]</span>
-                  <div className="w-full h-[1px] bg-neutral-200 mt-2" />
-                </div>
-                <div className="text-center py-4">
-                  <div className="w-10 h-10 rounded-full border border-neutral-300 mx-auto flex items-center justify-center font-mono text-xs text-neutral-500 font-bold mb-2">
-                    ANP
-                  </div>
-                  <span className="text-[10px] font-bold uppercase tracking-widest block text-neutral-800">Art Direction Lab</span>
-                </div>
-                <div className="font-mono text-[8px] text-neutral-450 flex justify-between items-center">
-                  <span>OUTSIDE ADVERTISING</span>
-                  <span>VOL. 042</span>
-                </div>
-              </div>
-
+              />
 
               {/* =======================================================
                   LEFT PANEL (Left Hinge Fold)
                   ======================================================= */}
               <div 
                 onClick={toggleLeft}
-                className="absolute top-[-1px] -left-[239px] w-[240px] h-[558px] origin-right transition-all duration-700 ease-out cursor-pointer select-none group"
+                className="absolute top-[-1px] -left-[240px] w-[240px] h-[558px] origin-right transition-all duration-700 ease-out cursor-pointer select-none group"
                 style={{
                   transformStyle: 'preserve-3d',
-                  transform: `rotateY(${leftAngle}deg)`,
-                  backfaceVisibility: 'hidden',
-                  left: '-239px',
-                  zIndex: leftZIndex,
-                  pointerEvents: leftPointerEvents as any
+                  transform: `rotateY(${leftAngle}deg) translateZ(${leftZ})`,
+                  zIndex: leftZIndex
                 }}
               >
-                {/* Visual seam highlighting */}
-                <div className="absolute right-0 top-0 bottom-0 w-1 bg-gradient-to-r from-transparent to-neutral-200/30 pointer-events-none" />
+                {/* Visual hinge shadow */}
+                <div className="absolute right-0 top-0 bottom-0 w-2 bg-gradient-to-r from-transparent to-black/15 z-10 pointer-events-none" />
 
-                {/* Left Panel FRONT (Interior Left spread when unfolded) */}
+                {/* Left Panel FRONT (Inside Left spread) */}
                 <div 
-                  className="absolute inset-0 flex flex-col justify-between p-5 text-neutral-800 bg-[#FAF9F6] border border-neutral-300"
+                  className="absolute inset-0 bg-cover bg-center bg-no-repeat border border-neutral-300/50 bg-white"
                   style={{
+                    backgroundImage: `url("/flyer_in_left.png")`,
                     backfaceVisibility: 'hidden',
-                    transform: 'translateZ(1px)', // Small positive offset
-                    opacity: isLeftFrontVisible ? 1 : 0,
-                    visibility: isLeftFrontVisible ? 'visible' : 'hidden',
-                    transition: 'opacity 700ms ease-out, visibility 700ms ease-out'
+                    WebkitBackfaceVisibility: 'hidden',
+                    transform: 'translateZ(2px)'
                   }}
-                >
-                  <div className="space-y-1">
-                    <span className="font-mono text-[8px] uppercase tracking-widest text-neutral-400 font-semibold block">[01 / LEFT FLAP]</span>
-                    <div className="w-full h-[1px] bg-neutral-200 mt-2" />
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-neutral-800 rounded-none" />
-                      <h4 className="text-xs font-bold tracking-wider uppercase text-neutral-900">Left Segment</h4>
-                    </div>
-                    <p className="text-[10px] text-neutral-400 leading-relaxed font-mono">
-                      Interactive door hinge layout. Pressing this panel folds it completely flat to act as the primary front cover of the brochure.
-                    </p>
-                  </div>
-                  <div className="font-mono text-[8px] text-neutral-400 flex justify-between items-center">
-                    <span>SEAM 1A</span>
-                    <span>CLICK TO CLOSE</span>
-                  </div>
-                </div>
+                />
 
-                {/* Left Panel BACK (This forms the main OUTER COVER when brochure is folded!) */}
+                {/* Left Panel BACK (Outside Left - MAIN COVER ARTWORK) */}
                 <div 
-                  className="absolute inset-0 flex flex-col justify-between p-5 text-neutral-800 bg-[#FAF9F6] border border-neutral-300"
+                  className="absolute inset-0 bg-cover bg-center bg-no-repeat border border-neutral-300/50 bg-white"
                   style={{
-                    transform: leftOpen ? 'rotateY(180deg) translateZ(1px)' : 'rotateY(180deg) translateZ(2px)',
+                    backgroundImage: `url("/flyer_out_left.png")`,
                     backfaceVisibility: 'hidden',
-                    opacity: isLeftBackVisible ? 1 : 0,
-                    visibility: isLeftBackVisible ? 'visible' : 'hidden',
-                    transition: 'opacity 700ms ease-out, visibility 700ms ease-out, transform 700ms ease-out'
+                    WebkitBackfaceVisibility: 'hidden',
+                    transform: 'rotateY(180deg) translateZ(2px)'
                   }}
-                >
-                  {/* Left Fold Indicator when folded */}
-                  <AnimatePresence>
-                    {!leftOpen && (
-                      <motion.div 
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="absolute inset-0 bg-neutral-900/[0.02] hover:bg-neutral-900/[0.05] transition-colors flex items-center justify-center z-10"
-                      >
-                        <div className="bg-white/95 border border-neutral-200 shadow-sm px-3 py-1.5 font-mono text-[8px] uppercase tracking-widest text-neutral-800 font-bold pointer-events-none rounded-none flex items-center gap-1.5">
-                          <span>Press to Unfold Left</span>
-                          <span className="inline-block animate-bounce">→</span>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-
-                  <div className="absolute inset-x-4 top-1/4 h-[1px] bg-neutral-200/80" />
-                  <div className="space-y-2">
-                    <span className="font-mono text-[8px] uppercase tracking-widest text-amber-600 font-bold block">[OUTSIDE COVER // FLAP]</span>
-                    <h3 className="text-base font-bold text-neutral-900 leading-tight tracking-tight uppercase">
-                      AntPet Flyer V.1
-                    </h3>
-                    <p className="text-[9px] text-neutral-450 leading-relaxed font-mono pt-1">
-                      Designed with zero border-radius substrates and meticulous print proportions.
-                    </p>
-                  </div>
-                  <div className="font-mono text-[8px] text-neutral-400 flex justify-between items-center pt-4 border-t border-neutral-100">
-                    <span>ANTPET.COM</span>
-                    <span>FLAP_OUT_COVER</span>
-                  </div>
-                </div>
-
+                />
               </div>
 
 
@@ -375,92 +277,37 @@ export default function BrochureViewer() {
                   ======================================================= */}
               <div 
                 onClick={toggleRight}
-                className="absolute top-[-1px] -right-[239px] w-[240px] h-[558px] origin-left transition-all duration-700 ease-out cursor-pointer select-none group"
+                className="absolute top-[-1px] -right-[240px] w-[240px] h-[558px] origin-left transition-all duration-700 ease-out cursor-pointer select-none group"
                 style={{
                   transformStyle: 'preserve-3d',
-                  transform: rightOpen 
-                    ? `rotateY(${rightAngle}deg)` 
-                    : `rotateY(${rightAngle}deg) translateY(1.5px) translateX(-2px)`,
-                  backfaceVisibility: 'hidden',
-                  right: '-239px',
-                  zIndex: rightZIndex,
-                  pointerEvents: rightPointerEvents as any
+                  transform: `rotateY(${rightAngle}deg) translateZ(${rightZ})`,
+                  zIndex: rightZIndex
                 }}
               >
-                {/* Visual seam highlighting */}
-                <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-l from-transparent to-neutral-200/30 pointer-events-none" />
+                {/* Visual hinge shadow */}
+                <div className="absolute left-0 top-0 bottom-0 w-2 bg-gradient-to-l from-transparent to-black/15 z-10 pointer-events-none" />
 
-                {/* Right Panel FRONT (Interior Right spread when unfolded) */}
+                {/* Right Panel FRONT (Inside Right spread) */}
                 <div 
-                  className="absolute inset-0 flex flex-col justify-between p-5 text-neutral-800 bg-[#FAF9F6] border border-neutral-300"
+                  className="absolute inset-0 bg-cover bg-center bg-no-repeat border border-neutral-300/50 bg-white"
                   style={{
+                    backgroundImage: `url("/flyer_in_right.png")`,
                     backfaceVisibility: 'hidden',
-                    transform: 'translateZ(1px)', // Small positive offset
-                    opacity: isRightFrontVisible ? 1 : 0,
-                    visibility: isRightFrontVisible ? 'visible' : 'hidden',
-                    transition: 'opacity 700ms ease-out, visibility 700ms ease-out'
+                    WebkitBackfaceVisibility: 'hidden',
+                    transform: 'translateZ(2px)'
                   }}
-                >
-                  <div className="space-y-1">
-                    <span className="font-mono text-[8px] uppercase tracking-widest text-neutral-400 font-semibold block">[03 / RIGHT FLAP]</span>
-                    <div className="w-full h-[1px] bg-neutral-200 mt-2" />
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 border border-neutral-800 rounded-none" />
-                      <h4 className="text-xs font-bold tracking-wider uppercase text-neutral-900">Right Segment</h4>
-                    </div>
-                    <p className="text-[10px] text-neutral-400 leading-relaxed font-mono">
-                      Symmetrical door hinge alignment. Pressing this panel rotates it outwards. When both panels are open, the flyer displays the complete front panorama.
-                    </p>
-                  </div>
-                  <div className="font-mono text-[8px] text-neutral-400 flex justify-between items-center">
-                    <span>SEAM 1B</span>
-                    <span>CLICK TO CLOSE</span>
-                  </div>
-                </div>
+                />
 
-                {/* Right Panel BACK */}
+                {/* Right Panel BACK (Outside Right) */}
                 <div 
-                  className="absolute inset-0 flex flex-col justify-between p-5 text-neutral-850 bg-[#FAF9F6] border border-neutral-300"
+                  className="absolute inset-0 bg-cover bg-center bg-no-repeat border border-neutral-300/50 bg-white"
                   style={{
-                    transform: rightOpen ? 'rotateY(180deg) translateZ(1px)' : 'rotateY(180deg) translateZ(-8px)',
+                    backgroundImage: `url("/flyer_out_right.png")`,
                     backfaceVisibility: 'hidden',
-                    opacity: isRightBackVisible ? 1 : 0,
-                    visibility: isRightBackVisible ? 'visible' : 'hidden',
-                    transition: 'opacity 700ms ease-out, visibility 700ms ease-out, transform 700ms ease-out'
+                    WebkitBackfaceVisibility: 'hidden',
+                    transform: 'rotateY(180deg) translateZ(2px)'
                   }}
-                >
-                  {/* Right Fold Indicator when folded */}
-                  <AnimatePresence>
-                    {!rightOpen && (
-                      <motion.div 
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="absolute inset-0 bg-neutral-900/[0.02] hover:bg-neutral-900/[0.05] transition-colors flex items-center justify-center z-10"
-                      >
-                        <div className="bg-white/95 border border-neutral-200 shadow-sm px-3 py-1.5 font-mono text-[8px] uppercase tracking-widest text-neutral-800 font-bold pointer-events-none rounded-none flex items-center gap-1.5">
-                          <span className="inline-block animate-bounce">←</span>
-                          <span>Press to Unfold Right</span>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-
-                  <div className="space-y-2">
-                    <span className="font-mono text-[8px] uppercase tracking-widest text-neutral-400 font-semibold block">[OUTSIDE COVER // BACK FLAP]</span>
-                    <div className="w-6 h-0.5 bg-amber-500 rounded-none" />
-                    <p className="text-[9px] text-neutral-450 leading-relaxed font-mono pt-2">
-                      Precision layout grid for architectural, catalog, and creative presentations. Press to unfold and inspect the internal details.
-                    </p>
-                  </div>
-                  <div className="font-mono text-[8px] text-neutral-400 flex justify-between items-center pt-4 border-t border-neutral-100">
-                    <span>ALIGN: PASSIVE</span>
-                    <span>BACK_COVER_FOLD</span>
-                  </div>
-                </div>
-
+                />
               </div>
 
             </div>

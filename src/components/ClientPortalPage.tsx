@@ -41,7 +41,10 @@ import {
   Upload,
   Globe,
   FileCheck,
-  FolderOpen
+  FolderOpen,
+  ExternalLink,
+  Copy,
+  ShieldAlert
 } from 'lucide-react';
 
 interface Client {
@@ -57,14 +60,87 @@ interface Client {
 const clientDirectory: Client[] = [
   {
     id: 'antpet-client',
-    name: 'Ant Pet Clinic Design Deliverables',
-    codename: 'ANTPET',
+    name: 'Ant Pet Clinic',
+    codename: 'Ant Pet Clinic',
     passwordKey: 'antpet',
-    description: 'Pristine 3D fold-out bifold and trifold printed brochure configurations, utilizing negative space and fine margins.',
+    description: 'Pristine 3D fold-out bifold and trifold printed brochure configurations, brand guidelines PDF, and file directory resources.',
     color: '#0A0A0A',
     accentColor: '#FF9F0A'
+  },
+  {
+    id: 'whitestone-client',
+    name: 'Whitestone Animal Clinic',
+    codename: 'Whitestone Animal Clinic',
+    passwordKey: 'whitestonecl',
+    description: 'Official Google Drive folder directories, brand assets, pitches, drafts, and typography resources.',
+    color: '#0B2545',
+    accentColor: '#134074'
   }
 ];
+
+interface DriveFolderItem {
+  id: string;
+  name: string;
+  url: string;
+}
+
+const clientDriveDirectories: Record<string, { clientName: string; folders: DriveFolderItem[] }> = {
+  'antpet-client': {
+    clientName: 'Ant Pet Clinic',
+    folders: [
+      {
+        id: 'ant-logo',
+        name: 'Logo',
+        url: 'https://drive.google.com/drive/folders/10EJPAiTi1j74uQ39ZXhheX0VaRdKcuwj?usp=drive_link'
+      },
+      {
+        id: 'ant-pitch',
+        name: 'Pitch',
+        url: 'https://drive.google.com/drive/folders/1EAQcW33PBjTj_Wv2632pSs-YjUVnA3Pr?usp=drive_link'
+      },
+      {
+        id: 'ant-drafts',
+        name: 'Drafts',
+        url: 'https://drive.google.com/drive/folders/1Ri1Jj07anecFQ7Jua4iUcKarvwqGIGxG?usp=drive_link'
+      },
+      {
+        id: 'ant-font',
+        name: 'Font',
+        url: 'https://drive.google.com/drive/folders/1Lt6DdjLlI5GZvdVJh2eHHMHXeToi8Ft-?usp=drive_link'
+      }
+    ]
+  },
+  'whitestone-client': {
+    clientName: 'Whitestone Animal Clinic',
+    folders: [
+      {
+        id: 'ws-logos',
+        name: 'Logos',
+        url: 'https://drive.google.com/drive/folders/1rqiegXzfiX9Vhtqd67vZuoJiZaBihKj1?usp=drive_link'
+      },
+      {
+        id: 'ws-fonts',
+        name: 'Fonts',
+        url: 'https://drive.google.com/drive/folders/1pVveUNzoRuqzBpzmfl5UglzF1UHepv41?usp=drive_link'
+      },
+      {
+        id: 'ws-billboard',
+        name: 'Billboard',
+        url: 'https://drive.google.com/drive/folders/1wh7mKorIllST49Y2MLiTx1cL1Vz_xZeh?usp=drive_link'
+      },
+      {
+        id: 'ws-standee',
+        name: 'Standee',
+        url: 'https://drive.google.com/drive/folders/1FMikeZpkGL0wA6MdVVYosVhIVjDmziGJ?usp=drive_link'
+      },
+      {
+        id: 'ws-vaccine-card',
+        name: 'Vaccine Card',
+        url: 'https://drive.google.com/drive/folders/1T_Ss5BIxQq4sI7Hw2QF8Pn5-b1j7S57D?usp=drive_link'
+      }
+    ]
+  }
+};
 
 interface ClientBranding {
   logoSymbol: string;
@@ -129,7 +205,7 @@ export default function ClientPortalPage({ onBackToPortfolio }: ClientPortalProp
   const [errorMsg, setErrorMsg] = useState('');
   const [shake, setShake] = useState(false);
   const [isSuccessfullyUnlocking, setIsSuccessfullyUnlocking] = useState(false);
-  const [activeTab, setActiveTab] = useState<'logo' | 'social' | 'website'>('logo');
+  const [activeTab, setActiveTab] = useState<'file-directory' | 'logo' | 'social' | 'website'>('file-directory');
   
   // Track likes interactively for high-fidelity feel
   const [interactiveLikes, setInteractiveLikes] = useState<Record<string, number>>({});
@@ -146,10 +222,14 @@ export default function ClientPortalPage({ onBackToPortfolio }: ClientPortalProp
 
   const handleUnlockSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const cleanInput = password.trim().toLowerCase().replace(/'/g, '');
+    const cleanInput = password.trim().replace(/'/g, '');
+    const lowerInput = cleanInput.toLowerCase();
     
     const matched = clientDirectory.find(
-      (c) => c.passwordKey === cleanInput || c.codename.toLowerCase() === cleanInput || c.id === cleanInput
+      (c) => c.passwordKey.toLowerCase() === lowerInput || 
+             c.codename.toLowerCase() === lowerInput || 
+             c.id === lowerInput ||
+             c.name.toLowerCase() === lowerInput
     );
 
     if (matched) {
@@ -159,7 +239,7 @@ export default function ClientPortalPage({ onBackToPortfolio }: ClientPortalProp
         setUnlockedClient(matched);
         setIsSuccessfullyUnlocking(false);
         setPassword('');
-        setActiveTab('logo'); // default to logo & branding when logging in
+        setActiveTab(matched.id === 'antpet-client' ? 'logo' : 'file-directory');
       }, 700);
     } else {
       setErrorMsg('Invalid client passkey code. Please try another code.');
@@ -182,9 +262,6 @@ export default function ClientPortalPage({ onBackToPortfolio }: ClientPortalProp
         {/* CONDITIONAL HEADER: Shrinks dramatically when client enters password */}
         {!unlockedClient ? (
           <div className="text-center mb-10 transition-all duration-300">
-            <p className="text-xs font-bold tracking-[0.2em] uppercase text-neutral-500 mb-2">
-              Secure Studio Staging
-            </p>
             <h2 className="text-3xl sm:text-5xl font-extrabold text-neutral-900 tracking-tight mb-3 font-sans">
               Client Portal Viewer
             </h2>
@@ -225,7 +302,7 @@ export default function ClientPortalPage({ onBackToPortfolio }: ClientPortalProp
               </div>
               <h3 className="text-xl font-black text-neutral-900">Protected Client Space</h3>
               <p className="text-xs text-neutral-400 mt-1 max-w-xs font-medium">
-                Enter your project passkey code provided by Manoelle Diokno to view current design milestones.
+                Enter your project passkey code provided by Manoelle Diokno to view current design deliverables or milestones.
               </p>
             </div>
 
@@ -310,7 +387,9 @@ export default function ClientPortalPage({ onBackToPortfolio }: ClientPortalProp
               <aside className="hidden md:flex w-56 sm:w-64 flex-shrink-0 bg-neutral-50 border-r border-neutral-200 flex-col overflow-y-auto">
                 <div className="px-4 py-4 bg-neutral-100/60 border-b border-neutral-200">
                   <span className="text-[9px] font-black uppercase tracking-widest text-neutral-400">Project Deliverables</span>
-                  <h3 className="text-xs font-black text-neutral-800 truncate leading-tight mt-0.5">{unlockedClient.codename} Hub</h3>
+                  <h3 className="text-xs font-black text-neutral-800 truncate leading-tight mt-0.5">
+                    {unlockedClient.id === 'antpet-client' ? 'Ant Pet Clinic' : unlockedClient.name}
+                  </h3>
                 </div>
                 
                 {/* Active Tabs Controls */}
@@ -350,40 +429,40 @@ export default function ClientPortalPage({ onBackToPortfolio }: ClientPortalProp
                           <p className="text-[9px] font-semibold text-neutral-450">Tactile Fold Geometry</p>
                         </div>
                       </button>
+
+                      <button
+                        onClick={() => setActiveTab('file-directory')}
+                        className={`w-full text-left p-3.5 rounded-xl flex items-center gap-3 transition-all ${
+                          activeTab === 'file-directory' 
+                            ? 'bg-neutral-900 text-white shadow-md font-bold' 
+                            : 'bg-white hover:bg-neutral-100 text-neutral-700 border border-neutral-200/80 shadow-xs'
+                        }`}
+                      >
+                        <div className={`w-8 h-8 rounded-lg flex-shrink-0 flex items-center justify-center text-sm font-black ${activeTab === 'file-directory' ? 'bg-white/15' : 'bg-neutral-100'}`}>
+                          📁
+                        </div>
+                        <div>
+                          <p className="text-xs font-bold leading-tight">File Directory</p>
+                          <p className="text-[9px] font-semibold text-neutral-450">Google Drive Folders</p>
+                        </div>
+                      </button>
                     </>
                   ) : (
                     <>
                       <button
-                        onClick={() => setActiveTab('logo')}
+                        onClick={() => setActiveTab('file-directory')}
                         className={`w-full text-left p-3.5 rounded-xl flex items-center gap-3 transition-all ${
-                          activeTab === 'logo' 
+                          activeTab === 'file-directory' 
                             ? 'bg-neutral-900 text-white shadow-md font-bold' 
                             : 'bg-white hover:bg-neutral-100 text-neutral-700 border border-neutral-200/80 shadow-xs'
                         }`}
                       >
-                        <div className={`w-8 h-8 rounded-lg flex-shrink-0 flex items-center justify-center text-sm font-black ${activeTab === 'logo' ? 'bg-white/15' : 'bg-neutral-100'}`}>
-                          🎨
+                        <div className={`w-8 h-8 rounded-lg flex-shrink-0 flex items-center justify-center text-sm font-black ${activeTab === 'file-directory' ? 'bg-white/15' : 'bg-neutral-100'}`}>
+                          📁
                         </div>
                         <div>
-                          <p className="text-xs font-bold leading-tight">Logo & Branding</p>
-                          <p className={`text-[9px] font-semibold ${activeTab === 'logo' ? 'text-neutral-400' : 'text-neutral-400'}`}>Asset Guidelines</p>
-                        </div>
-                      </button>
-
-                      <button
-                        onClick={() => setActiveTab('social')}
-                        className={`w-full text-left p-3.5 rounded-xl flex items-center gap-3 transition-all ${
-                          activeTab === 'social' 
-                            ? 'bg-neutral-900 text-white shadow-md font-bold' 
-                            : 'bg-white hover:bg-neutral-100 text-neutral-700 border border-neutral-200/80 shadow-xs'
-                        }`}
-                      >
-                        <div className={`w-8 h-8 rounded-lg flex-shrink-0 flex items-center justify-center text-sm font-black ${activeTab === 'social' ? 'bg-white/15' : 'bg-neutral-100'}`}>
-                          📱
-                        </div>
-                        <div>
-                          <p className="text-xs font-bold leading-tight">Social Media</p>
-                          <p className={`text-[9px] font-semibold ${activeTab === 'social' ? 'text-neutral-400' : 'text-neutral-400'}`}>Creatives & Copy</p>
+                          <p className="text-xs font-bold leading-tight">File Directory</p>
+                          <p className="text-[9px] font-semibold text-neutral-450">Google Drive Folders</p>
                         </div>
                       </button>
 
@@ -398,9 +477,15 @@ export default function ClientPortalPage({ onBackToPortfolio }: ClientPortalProp
                         <div className={`w-8 h-8 rounded-lg flex-shrink-0 flex items-center justify-center text-sm font-black ${activeTab === 'website' ? 'bg-white/15' : 'bg-neutral-100'}`}>
                           💻
                         </div>
-                        <div>
-                          <p className="text-xs font-bold leading-tight">Interactive Site</p>
-                          <p className={`text-[9px] font-semibold ${activeTab === 'website' ? 'text-neutral-400' : 'text-neutral-400'}`}>Live Staging Frame</p>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-bold leading-tight truncate">Website Version 2 Update</p>
+                          <span className={`text-[8.5px] font-black uppercase tracking-wider inline-block mt-0.5 px-1.5 py-0.2 rounded border ${
+                            activeTab === 'website' 
+                              ? 'bg-amber-400/20 text-amber-300 border-amber-400/40' 
+                              : 'bg-amber-50 text-amber-700 border-amber-200'
+                          }`}>
+                            (PENDING)
+                          </span>
                         </div>
                       </button>
                     </>
@@ -426,7 +511,7 @@ export default function ClientPortalPage({ onBackToPortfolio }: ClientPortalProp
                     <>
                       <button
                         onClick={() => setActiveTab('logo')}
-                        className={`flex-1 py-2.5 px-3 rounded-lg flex items-center justify-center gap-2 transition-all text-xs font-bold border ${
+                        className={`flex-1 py-2.5 px-3 rounded-lg flex items-center justify-center gap-2 transition-all text-xs font-bold border whitespace-nowrap ${
                           activeTab === 'logo'
                             ? 'bg-neutral-900 text-white border-neutral-900 shadow-sm'
                             : 'bg-white hover:bg-neutral-100 text-neutral-700 border-neutral-200 shadow-3xs'
@@ -438,7 +523,7 @@ export default function ClientPortalPage({ onBackToPortfolio }: ClientPortalProp
 
                       <button
                         onClick={() => setActiveTab('website')}
-                        className={`flex-1 py-2.5 px-3 rounded-lg flex items-center justify-center gap-2 transition-all text-xs font-bold border ${
+                        className={`flex-1 py-2.5 px-3 rounded-lg flex items-center justify-center gap-2 transition-all text-xs font-bold border whitespace-nowrap ${
                           activeTab === 'website'
                             ? 'bg-neutral-900 text-white border-neutral-900 shadow-sm'
                             : 'bg-white hover:bg-neutral-100 text-neutral-700 border-neutral-200 shadow-3xs'
@@ -447,47 +532,53 @@ export default function ClientPortalPage({ onBackToPortfolio }: ClientPortalProp
                         <span>📐</span>
                         <span>Flyer Mockup</span>
                       </button>
+
+                      <button
+                        onClick={() => setActiveTab('file-directory')}
+                        className={`flex-1 py-2.5 px-3 rounded-lg flex items-center justify-center gap-2 transition-all text-xs font-bold border whitespace-nowrap ${
+                          activeTab === 'file-directory'
+                            ? 'bg-neutral-900 text-white border-neutral-900 shadow-sm'
+                            : 'bg-white hover:bg-neutral-100 text-neutral-700 border-neutral-200 shadow-3xs'
+                        }`}
+                      >
+                        <span>📁</span>
+                        <span>File Directory</span>
+                      </button>
                     </>
                   ) : (
                     <>
                       <button
-                        onClick={() => setActiveTab('logo')}
-                        className={`flex-1 py-2.5 px-2 rounded-lg flex items-center justify-center gap-1.5 transition-all text-xs font-bold whitespace-nowrap border ${
-                          activeTab === 'logo'
+                        onClick={() => setActiveTab('file-directory')}
+                        className={`flex-1 py-2.5 px-3 rounded-lg flex items-center justify-center gap-2 transition-all text-xs font-bold border whitespace-nowrap ${
+                          activeTab === 'file-directory'
                             ? 'bg-neutral-900 text-white border-neutral-900 shadow-sm'
                             : 'bg-white hover:bg-neutral-100 text-neutral-700 border-neutral-200 shadow-3xs'
                         }`}
                       >
-                        <span>🎨</span>
-                        <span>Branding</span>
-                      </button>
-
-                      <button
-                        onClick={() => setActiveTab('social')}
-                        className={`flex-1 py-2.5 px-2 rounded-lg flex items-center justify-center gap-1.5 transition-all text-xs font-bold whitespace-nowrap border ${
-                          activeTab === 'social'
-                            ? 'bg-neutral-900 text-white border-neutral-900 shadow-sm'
-                            : 'bg-white hover:bg-neutral-100 text-neutral-700 border-neutral-200 shadow-3xs'
-                        }`}
-                      >
-                        <span>📱</span>
-                        <span>Socials</span>
+                        <span>📁</span>
+                        <span>File Directory</span>
                       </button>
 
                       <button
                         onClick={() => setActiveTab('website')}
-                        className={`flex-1 py-2.5 px-2 rounded-lg flex items-center justify-center gap-1.5 transition-all text-xs font-bold whitespace-nowrap border ${
+                        className={`flex-1 py-2.5 px-3 rounded-lg flex items-center justify-center gap-2 transition-all text-xs font-bold border whitespace-nowrap ${
                           activeTab === 'website'
                             ? 'bg-neutral-900 text-white border-neutral-900 shadow-sm'
                             : 'bg-white hover:bg-neutral-100 text-neutral-700 border-neutral-200 shadow-3xs'
                         }`}
                       >
                         <span>💻</span>
-                        <span>Interactive</span>
+                        <span>Website V2</span>
+                        <span className="text-[8px] font-black text-amber-700 bg-amber-50 border border-amber-200 px-1 py-0.2 rounded uppercase">(PENDING)</span>
                       </button>
                     </>
                   )}
                 </div>
+                
+                {/* 0. FILE DIRECTORY TAB */}
+                {activeTab === 'file-directory' && (
+                  <FileDirectoryView clientId={unlockedClient.id} />
+                )}
                 
                 {/* 1. LOGO & BRANDING TAB */}
                 {activeTab === 'logo' && currentDeliverables && (
@@ -703,6 +794,21 @@ export default function ClientPortalPage({ onBackToPortfolio }: ClientPortalProp
                     {unlockedClient.id === 'antpet-client' ? (
                       <div className="flex-1 bg-white flex flex-col h-full overflow-y-auto">
                         <BrochureViewer />
+                      </div>
+                    ) : unlockedClient.id === 'whitestone-client' ? (
+                      <div className="p-8 max-w-2xl mx-auto w-full my-auto text-center space-y-4">
+                        <div className="w-16 h-16 rounded-2xl bg-amber-50 text-amber-600 border border-amber-200 mx-auto flex items-center justify-center text-3xl shadow-sm">
+                          💻
+                        </div>
+                        <div>
+                          <span className="text-[10px] font-black uppercase tracking-widest text-amber-700 bg-amber-100 border border-amber-300 px-2.5 py-1 rounded-full inline-block mb-2">
+                            STATUS: PENDING
+                          </span>
+                          <h3 className="text-2xl font-black text-neutral-900 tracking-tight">Website Version 2 Update</h3>
+                          <p className="text-xs text-neutral-500 max-w-md mx-auto mt-2 leading-relaxed font-medium">
+                            The Version 2 website update for Whitestone Animal Clinic is currently in progress and pending review. Access all active Drive assets under the File Directory tab.
+                          </p>
+                        </div>
                       </div>
                     ) : (
                       <InteractiveWebSandbox unlockedClient={unlockedClient} />
@@ -1070,6 +1176,122 @@ function InteractiveWebSandbox({ unlockedClient }: InteractiveWebSandboxProps) {
             </div>
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+const GoogleDriveIcon = () => (
+  <svg className="w-8 h-8 flex-shrink-0" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg">
+    <path d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/>
+    <path d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0 -1.2 4.5h27.5z" fill="#00ac47"/>
+    <path d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.5l5.85 10.15z" fill="#ea4335"/>
+    <path d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/>
+    <path d="m59.8 53h27.5c0-1.55-.4-3.1-1.2-4.5l-13.75-23.8c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8z" fill="#2684fc"/>
+    <path d="m73.4 76.8 13.75-23.8c.8-1.4 1.2-2.95 1.2-4.5h-57.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h47.1c1.6 0 3.15-.4 4.5-1.2z" fill="#ffba00"/>
+  </svg>
+);
+
+function FileDirectoryView({ clientId }: { clientId: string }) {
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+  const clientData = clientDriveDirectories[clientId] || clientDriveDirectories['antpet-client'];
+
+  const handleCopy = (id: string, url: string) => {
+    navigator.clipboard.writeText(url);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
+
+  return (
+    <div className="p-6 space-y-6 max-w-5xl mx-auto w-full">
+      {/* Header Banner */}
+      <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 relative overflow-hidden">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-neutral-50 flex items-center justify-center shadow-xs border border-neutral-200/80">
+            <GoogleDriveIcon />
+          </div>
+          <div>
+            <span className="text-[10px] font-black uppercase text-amber-600 tracking-widest bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200 inline-block">
+              Google Drive Cloud Storage
+            </span>
+            <h3 className="text-xl sm:text-2xl font-black text-neutral-900 mt-1 leading-tight">
+              File Directory
+            </h3>
+            <p className="text-xs text-neutral-500 mt-0.5">
+              Official Google Drive folders for {clientData.clientName}.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 bg-neutral-50 border border-neutral-200 px-3 py-1.5 rounded-xl text-xs font-bold text-neutral-600">
+          <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+          <span>Syncing Live Cloud Folders</span>
+        </div>
+      </div>
+
+      {/* Security Warning Note */}
+      <div className="bg-amber-50/80 border border-amber-200/90 rounded-2xl p-4 sm:p-5 flex items-start gap-3.5 shadow-xs">
+        <div className="p-2 bg-amber-100 text-amber-800 rounded-xl flex-shrink-0 mt-0.5">
+          <ShieldAlert className="w-5 h-5" />
+        </div>
+        <div className="text-xs text-amber-950 leading-relaxed font-medium">
+          <span className="font-extrabold text-amber-900 block mb-0.5 uppercase tracking-wider text-[11px]">
+            IMPORTANT SECURITY NOTICE
+          </span>
+          IMPORTANT: Before sharing these links, note that files may be stored within folders that also contain your publicly accessible directories. When forwarding files, please download a separate copy first for your security.
+        </div>
+      </div>
+
+      {/* Grid of Drive Folders */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {clientData.folders.map((item) => (
+          <div 
+            key={item.id} 
+            className="bg-white rounded-2xl border border-neutral-200/90 hover:border-neutral-400 shadow-xs hover:shadow-md transition-all p-5 flex flex-col justify-between group"
+          >
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-neutral-50 rounded-xl border border-neutral-100 group-hover:scale-105 transition-transform flex items-center justify-center">
+                    <GoogleDriveIcon />
+                  </div>
+                  <div>
+                    <h4 className="text-base font-extrabold text-neutral-900 leading-tight">
+                      {item.name}
+                    </h4>
+                    <span className="text-[10px] font-medium text-neutral-400">
+                      Google Drive Folder
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-3 border-t border-neutral-100 flex items-center gap-2">
+              <a
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 bg-neutral-900 hover:bg-neutral-800 active:scale-[0.98] text-white py-2.5 px-4 rounded-xl text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-2 cursor-pointer no-underline"
+              >
+                <span>Open Drive Folder</span>
+                <ExternalLink className="w-3.5 h-3.5 text-neutral-300" />
+              </a>
+
+              <button
+                onClick={() => handleCopy(item.id, item.url)}
+                className="p-2.5 bg-neutral-100 hover:bg-neutral-200 active:scale-95 text-neutral-700 rounded-xl transition-all cursor-pointer border border-neutral-200/80"
+                title="Copy folder URL"
+              >
+                {copiedId === item.id ? (
+                  <Check className="w-4 h-4 text-green-600" />
+                ) : (
+                  <Copy className="w-4 h-4 text-neutral-600" />
+                )}
+              </button>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
