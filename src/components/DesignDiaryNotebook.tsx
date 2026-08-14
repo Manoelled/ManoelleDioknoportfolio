@@ -506,16 +506,16 @@ export default function DesignDiaryNotebook() {
               <Page position="right" bgClass="page-8-texture">
                 {renderPageContent(8)}
               </Page>
-              <Page position="left" bgClass="page-11-texture">
+              <Page position="left" bgClass="page-9-texture">
                 {renderPageContent(9)}
               </Page>
-              <Page position="right" bgClass="page-12-texture">
+              <Page position="right" bgClass="page-10-texture">
                 {renderPageContent(10)}
               </Page>
-              <Page position="left" bgClass="page-9-texture">
+              <Page position="left" bgClass="page-11-texture">
                 {renderPageContent(11)}
               </Page>
-              <Page position="right" bgClass="page-10-texture">
+              <Page position="right" bgClass="page-12-texture">
                 {renderPageContent(12)}
               </Page>
             </HTMLFlipBook>

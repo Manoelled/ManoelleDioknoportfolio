@@ -426,28 +426,28 @@ img {
 
 .page-9-texture {
   background-image: url('/assets/images/NotebookPage9.png');
-  background-size: cover;
+  background-size: 100% 100%;
   background-position: center;
   background-color: #FAF8F5;
 }
 
 .page-10-texture {
   background-image: url('/assets/images/NotebookPage10.png');
-  background-size: cover;
+  background-size: 100% 100%;
   background-position: center;
   background-color: #FAF8F5;
 }
 
 .page-11-texture {
   background-image: url('/assets/images/NotebookPage11.png');
-  background-size: cover;
+  background-size: 100% 100%;
   background-position: center;
   background-color: #FAF8F5;
 }
 
 .page-12-texture {
   background-image: url('/assets/images/NotebookPage12.png');
-  background-size: cover;
+  background-size: 100% 100%;
   background-position: center;
   background-color: #FAF8F5;
 }

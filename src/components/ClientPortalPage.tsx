@@ -75,6 +75,15 @@ const clientDirectory: Client[] = [
     description: 'Official Google Drive folder directories, brand assets, pitches, drafts, and typography resources.',
     color: '#0B2545',
     accentColor: '#134074'
+  },
+  {
+    id: 'adtests-client',
+    name: 'Interactive Ad Placeholders',
+    codename: 'Interactive Ad Placeholders (#adtests)',
+    passwordKey: 'adtests',
+    description: '6 Interactive Ad Unit Placeholders, size benchmarks, and data-size prompt wrappers.',
+    color: '#000000',
+    accentColor: '#00E5FF'
   }
 ];
 
@@ -224,6 +233,17 @@ export default function ClientPortalPage({ onBackToPortfolio }: ClientPortalProp
     e.preventDefault();
     const cleanInput = password.trim().replace(/'/g, '');
     const lowerInput = cleanInput.toLowerCase();
+
+    if (lowerInput === 'adtests' || lowerInput === 'adtests-client' || lowerInput === '#adtests') {
+      setErrorMsg('');
+      setIsSuccessfullyUnlocking(true);
+      setTimeout(() => {
+        setIsSuccessfullyUnlocking(false);
+        setPassword('');
+        window.location.hash = 'adtests';
+      }, 700);
+      return;
+    }
     
     const matched = clientDirectory.find(
       (c) => c.passwordKey.toLowerCase() === lowerInput || 

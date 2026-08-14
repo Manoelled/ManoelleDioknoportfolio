@@ -9,8 +9,10 @@ export default function Footer() {
           © 2026 Manoelle Diokno. All rights reserved.
         </p>
 
-        {/* Legal */}
+        {/* Legal & Labs */}
         <div className="flex items-center gap-4 text-xs text-neutral-400">
+          <a href="#adtests" className="hover:text-neutral-700 transition-colors font-mono">#adtests</a>
+          <span>·</span>
           <a href="#" className="hover:text-neutral-700 transition-colors">Privacy</a>
           <span>·</span>
           <a href="#" className="hover:text-neutral-700 transition-colors">Terms</a>

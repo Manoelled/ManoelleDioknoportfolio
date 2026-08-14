@@ -19,6 +19,7 @@ import DesignSentimentsPage from './components/projects/designsentiments/DesignS
 import CliptographicPage from './components/projects/cliptographic/CliptographicPage';
 import ClipsPage from './components/projects/clips/ClipsPage';
 import AderizetestPage from './components/AderizetestPage';
+import AdTestsPage from './components/adtests/AdTestsPage';
 import FeaturedWorksPage from './components/FeaturedWorksPage';
 import Footer from './components/Footer';
 import ScrollProgress from './components/ui/ScrollProgress';
@@ -39,6 +40,8 @@ export default function App() {
       window.history.pushState(null, '', '/clips');
     } else if (view === 'aderizetest') {
       window.history.pushState(null, '', '/aderizetest');
+    } else if (view === 'adtests') {
+      window.history.pushState(null, '', '/#adtests');
     } else if (view === 'portfolio') {
       window.history.pushState(null, '', '/');
     } else {
@@ -54,6 +57,8 @@ export default function App() {
         setCurrentView('clips');
       } else if (path === '/aderizetest' || hash === '#aderizetest') {
         setCurrentView('aderizetest');
+      } else if (path === '/adtests' || hash === '#adtests') {
+        setCurrentView('adtests');
       } else if (hash) {
         const viewId = hash.replace('#', '');
         if (viewId) {
@@ -66,6 +71,8 @@ export default function App() {
           setCurrentView('clips');
         } else if (currentPath === '/aderizetest') {
           setCurrentView('aderizetest');
+        } else if (currentPath === '/adtests') {
+          setCurrentView('adtests');
         } else if (currentPath === '/') {
           setCurrentView('portfolio');
         }
@@ -189,6 +196,8 @@ export default function App() {
         <ClipsPage onBack={returnFromBrand} />
       ) : currentView === 'aderizetest' ? (
         <AderizetestPage />
+      ) : currentView === 'adtests' ? (
+        <AdTestsPage />
       ) : (
         <div className="pt-16 sm:pt-20">
           <ClientPortalPage onBackToPortfolio={() => navigateToView('portfolio')} />
